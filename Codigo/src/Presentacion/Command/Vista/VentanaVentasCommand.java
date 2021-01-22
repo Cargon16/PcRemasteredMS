@@ -1,0 +1,21 @@
+package Presentacion.Command.Vista;
+
+import Presentacion.Command.Command;
+import Presentacion.Command.Contexto;
+import Presentacion.Ventas.VentanaVentas;
+
+public class VentanaVentasCommand implements Command {
+
+	@Override
+	public Contexto ejecutar(Object obj) {
+		
+		Contexto contexto = (Contexto) obj;
+		if (contexto.getDatos() == null)
+
+			VentanaVentas.getInstance().setVisible(true);
+		else
+			VentanaVentas.getInstance().actualizar((Contexto)contexto.getDatos());
+		return null ;
+	}
+
+}

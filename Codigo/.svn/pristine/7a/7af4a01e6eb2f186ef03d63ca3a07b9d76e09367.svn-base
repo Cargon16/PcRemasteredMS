@@ -1,0 +1,267 @@
+package Presentacion.Empleado;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import Negocio.Departamento.Departamento;
+import Negocio.Empleado.Empleado;
+import Negocio.Empleado.TiempoCompleto;
+import Negocio.Empleado.TiempoParcial;
+import Negocio.Parseador.Parseador;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+
+public class PanelUpdateEmpleado extends JPanel implements Ventana{
+
+	private static final long serialVersionUID = 1L;
+
+	private JLabel horaSem_lbl;
+	private JLabel sueldoHoralbl;
+	private JRadioButton activoRB;
+	private JRadioButton inactivoRB;
+	private JTextField botonfindtext;
+	private JButton botonFind;
+	private JTextField horasText;
+	private JLabel lblDepartamento;
+	private JTextField telfText;
+	private JTextField nombretext;
+	private JTextField sueldoHoraText;
+	private JComboBox<?> comboBox;
+	private JTextField dptText;
+	private JButton button;
+	private JTextField DeptIsActivoTextField;
+	private JLabel lbldepartamentoTieneQue;
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public PanelUpdateEmpleado() {
+		setLayout(null);
+		setOpaque(false);
+		telfText = new JTextField();
+		telfText.setColumns(10);
+		telfText.setBounds(104, 154, 279, 38);
+		add(telfText);
+
+		JLabel telefono_lbl = new JLabel("Teléfono");
+		telefono_lbl.setBounds(49, 166, 64, 14);
+		add(telefono_lbl);
+
+		nombretext = new JTextField();
+		nombretext.setColumns(10);
+		nombretext.setBounds(104, 92, 279, 38);
+		add(nombretext);
+
+		JLabel nombre_lbl = new JLabel("Nombre");
+		nombre_lbl.setBounds(49, 104, 46, 14);
+		add(nombre_lbl);
+
+		sueldoHoralbl = new JLabel("Sueldo por hora");
+		sueldoHoralbl.setBounds(49, 311, 121, 14);
+		add(sueldoHoralbl);
+
+		button = new JButton("Añadir");
+
+		button.setBounds(518, 359, 132, 62);
+		add(button);
+		button.setEnabled(false);
+		comboBox = new JComboBox();
+		comboBox.setModel(new DefaultComboBoxModel(new String[] { "Tiempo Parcial", "Tiempo Completo" }));
+		comboBox.setBounds(50, 270, 279, 28);
+		comboBox.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (comboBox.getSelectedItem() == "Tiempo Parcial") {
+					horaSem_lbl.setVisible(true);
+					horasText.setVisible(true);
+					sueldoHoralbl.setText("Sueldo por hora");
+					horaSem_lbl.setText("Horas por Semana");
+					SwingUtilities.updateComponentTreeUI(sueldoHoralbl);
+				} else{
+					sueldoHoralbl.setText("Sueldo");
+					horaSem_lbl.setVisible(false);
+					horasText.setVisible(false);
+				}
+				SwingUtilities.updateComponentTreeUI(sueldoHoralbl);
+			}
+		});
+		add(comboBox);
+		activoRB = new JRadioButton("Activo");
+		activoRB.setToolTipText("Activo");
+		activoRB.setBounds(127, 238, 109, 23);
+		activoRB.setOpaque(false);
+		inactivoRB = new JRadioButton("Inactivo");
+		activoRB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inactivoRB.setSelected(false);
+				activoRB.setSelected(true);
+			}
+		});
+		add(activoRB);
+		inactivoRB.setBounds(238, 238, 109, 23);
+		inactivoRB.setOpaque(false);
+		add(inactivoRB);
+		inactivoRB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inactivoRB.setSelected(true);
+				activoRB.setSelected(false);
+			}
+		});
+		sueldoHoraText = new JTextField();
+		sueldoHoraText.setBounds(104, 338, 279, 38);
+		add(sueldoHoraText);
+		sueldoHoraText.setColumns(10);
+
+		horaSem_lbl = new JLabel("Horas por Semana");
+		horaSem_lbl.setBounds(49, 389, 130, 17);
+		add(horaSem_lbl);
+
+		horasText = new JTextField();
+		horasText.setColumns(10);
+		horasText.setBounds(104, 408, 279, 38);
+		add(horasText);
+
+		lblDepartamento = new JLabel("Departamento");
+		lblDepartamento.setBounds(26, 215, 87, 17);
+		add(lblDepartamento);
+
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean ok = false ;
+				if(activoRB.isSelected()) 
+					ok = true;
+				if (comboBox.getSelectedItem() == "Tiempo Parcial") {
+					if(Parseador.esNumerico(telfText.getText()) && Parseador.ComprobarTelefono(Integer.valueOf(telfText.getText())) && Parseador.esAlfabetico(nombretext.getText())){
+						Departamento dept;
+						if(dptText.getText().toString().isEmpty()) dept = new Departamento(-1, "", (float)0);
+						else
+							dept = new Departamento(Integer.valueOf(dptText.getText()), "", (float)0);
+						Integer id = Integer.valueOf(botonfindtext.getText());
+						TiempoParcial tc = new TiempoParcial(id, Integer.valueOf(telfText.getText()), ok, nombretext.getText(), "",dept, Integer.valueOf(sueldoHoraText.getText()), Integer.valueOf(horasText.getText()));
+						Controller.getInstance().ejecutar(new Contexto(Eventos.updateEmpelado, tc));
+					}else{
+						JOptionPane.showMessageDialog(null, "Errores sintacticos encontrados");
+					}
+
+
+				} else {
+
+					if(Parseador.esNumerico(telfText.getText()) && Parseador.esAlfabetico(nombretext.getText())){
+
+						Departamento dept;
+						if(dptText.getText().toString().isEmpty()) dept = new Departamento(-1, "", (float)0);
+						else
+							dept = new Departamento(Integer.valueOf(dptText.getText()), "", (float)0);
+						TiempoCompleto tc = new TiempoCompleto(Integer.valueOf(botonfindtext.getText()), Integer.valueOf(telfText.getText()), ok, nombretext.getText(), "",dept, Integer.valueOf(sueldoHoraText.getText()));
+						Controller.getInstance().ejecutar(new Contexto(Eventos.updateEmpelado, tc));
+					}else{
+						JOptionPane.showMessageDialog(null, "Errores sintacticos encontrados");
+					}
+				}
+			}
+		});
+		botonfindtext = new JTextField();
+		botonfindtext.setBounds(49, 29, 368, 20);
+		botonfindtext.setVisible(true);
+		add(botonfindtext);
+		botonfindtext.setColumns(10);
+
+		botonFind = new JButton("Buscar");
+
+		botonFind.setBounds(427, 28, 222, 23);
+		botonFind.setVisible(true);
+		botonFind.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(!botonfindtext.getText().isEmpty() && Parseador.comprobarNumeroPositivo(Integer.valueOf(botonfindtext.getText()))){
+					Controller.getInstance().ejecutar(new Contexto(Eventos.readEmpleado,(botonfindtext.getText())));
+					button.setEnabled(true);;
+				}
+				else
+					JOptionPane.showMessageDialog(null, "Datos incorrectos, comprueba sintacticamente los datos introducidos.");
+			}
+		});
+		add(botonFind);
+
+		dptText = new JTextField();
+		dptText.setBounds(104, 209, 116, 22);
+		add(dptText);
+		dptText.setColumns(10);
+		
+		DeptIsActivoTextField = new JTextField();
+		DeptIsActivoTextField.setColumns(10);
+		DeptIsActivoTextField.setBounds(331, 209, 116, 22);
+		add(DeptIsActivoTextField);
+		
+		JLabel lblDeptActivo = new JLabel("Dept Activo");
+		lblDeptActivo.setBounds(238, 214, 87, 17);
+		add(lblDeptActivo);
+		
+		lbldepartamentoTieneQue = new JLabel("**Departamento tiene que estar activo para poder actualizar");
+		lbldepartamentoTieneQue.setBounds(26, 468, 621, 17);
+		add(lbldepartamentoTieneQue);
+
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+
+		Empleado e = (Empleado) contexto.getDatos();
+		
+		telfText.setText(e.getTelefono().toString());
+		nombretext.setText(e.getNombre());
+		dptText.setText(e.getDepartamento().getIdDepartamento().toString());
+	
+		if(e.getDepartamento().getActivo()){
+			DeptIsActivoTextField.setText("Activo");
+		}else DeptIsActivoTextField.setText("Inactivo");
+		DeptIsActivoTextField.setEditable(false);
+		if(e instanceof TiempoParcial){
+			horasText.setText(((TiempoParcial)e).getHorasSemana().toString());
+			sueldoHoraText.setText(((TiempoParcial)e).getSueldoHora().toString());
+		}
+		if(e instanceof TiempoCompleto){
+			comboBox.setSelectedItem("Tiempo Completo");
+			sueldoHoraText.setText(((TiempoCompleto)e).getSueldo().toString());
+
+		}
+
+		if (e.getActivo())
+			activoRB.setSelected(true);
+		else
+			inactivoRB.setSelected(true);
+
+	}
+	@Override
+	public void resetCamps() {
+		activoRB.setOpaque(false);
+		activoRB.setSelected(false);
+		inactivoRB.setOpaque(false);
+		inactivoRB.setSelected(false);
+		botonfindtext.setText(null);;
+		horasText.setText(null);
+		telfText.setText(null);;
+		nombretext.setText(null);;
+		sueldoHoraText.setText(null);;
+		dptText.setText(null);
+		button.setEnabled(false);
+		DeptIsActivoTextField.setText(null);
+
+	}
+}
+

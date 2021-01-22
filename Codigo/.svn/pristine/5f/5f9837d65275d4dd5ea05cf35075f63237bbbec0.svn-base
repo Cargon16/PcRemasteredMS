@@ -1,0 +1,27 @@
+/**
+ * 
+ */
+package Presentacion.Command.Competencia;
+
+import java.util.List;
+
+import Integracion.Empleado.TEmpleado;
+import Negocio.FactoriaNegocio.FactoriaNegocio;
+import Presentacion.Command.Command;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+public class MostrarEmpleadosQuePoseenCompetenciaCommand implements Command{
+
+	@Override
+	public Contexto ejecutar(Object contexto) {
+		// TODO Auto-generated method stub
+		Integer id = (Integer) contexto;
+		List<TEmpleado> i = FactoriaNegocio.getInstance().generaSACompetencia().mostrarTodosLosEmpleadosQuePoseenCompetencia(id);
+		if(i==null || i.isEmpty()){
+			return new Contexto(Eventos.mostrarEmpleadosQuePoseenCompetenciaCommandError, i);
+			
+		}else return new Contexto(Eventos.mostrarEmpleadosQuePoseenCompetenciaCommand, i);
+	}
+
+}

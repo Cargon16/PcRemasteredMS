@@ -1,0 +1,132 @@
+package Negocio.Empleado;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Version;
+
+import Negocio.Competencia.Tiene;
+import Negocio.Departamento.Departamento;
+
+@Entity
+@NamedQueries({
+	
+	@NamedQuery(name = "Negocio.Empleado.Empleado.findByNombre", query = "select obj from Empleado obj where obj.nombre = :nombre"),
+	@NamedQuery(name = "Negocio.Empleado.Empleado.findByDepartamento", query = "select obj from Empleado obj where obj.departamento = :departamento and obj.activo = true"),
+	@NamedQuery(name="Negocio.Empleado.Empleado.readAllEmpleados",query="select obj from Empleado obj where obj.activo = 1 ")
+})
+public abstract class Empleado implements Serializable{
+	
+
+	private static final long serialVersionUID = 1L;
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer idEmpleado;
+	@Version
+	private int version;
+	private Integer telefono;
+	private Boolean activo;
+	private String nombre;
+	private String password;
+	@ManyToOne
+	private Departamento departamento;
+	@OneToMany(mappedBy = "empleado")
+	private List<Tiene> tiene;
+	
+	
+	public Empleado(){}
+	
+	public Empleado(Integer idEmpleado, Integer telefono, Boolean activo, String nombre, String password) {
+		super();
+		this.idEmpleado = idEmpleado;
+		this.telefono = telefono;
+		this.activo = activo;
+		this.nombre = nombre;
+		this.password = password;
+		this.tiene = new ArrayList<>();
+	}
+	
+	public Empleado(Integer telefono, Boolean activo, String nombre, String password,
+			Departamento departamento) {
+		super();
+		this.telefono = telefono;
+		this.activo = activo;
+		this.nombre = nombre;
+		this.password = password;
+		this.departamento = departamento;
+		this.tiene = new ArrayList<>();
+	}
+	public Empleado(Integer id, Integer telefono, Boolean activo, String nombre, String password,
+			Departamento departamento) {
+		super();
+		this.idEmpleado = id;
+		this.telefono = telefono;
+		this.activo = activo;
+		this.nombre = nombre;
+		this.password = password;
+		this.departamento = departamento;
+		this.tiene = new ArrayList<>();
+	}
+	
+	public Integer getIdEmpleado() {
+		return idEmpleado;
+	}
+	public void setIdEmpleado(Integer idEmpleado) {
+		this.idEmpleado = idEmpleado;
+	}
+	public Integer getTelefono() {
+		return telefono;
+	}
+	public void setTelefono(Integer telefono) {
+		this.telefono = telefono;
+	}
+	public Boolean getActivo() {
+		return activo;
+	}
+	public boolean isActiva() {
+		return activo;
+	}
+	public Departamento getDepartamento(){
+		return this.departamento;
+	}
+	public void setDepartamento(Departamento departamento){
+		this.departamento = departamento;
+	}
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	@Override
+	public String toString() {
+		return "TEmpleado [idEmpleado=" + idEmpleado + ", version=" + version + ", telefono=" + telefono + ", activo="
+				+ activo + ", nombre=" + nombre + ", password=" + password + ", departamento=" + departamento + "]";
+	}
+	public void addCompetencia(Tiene comp){
+		this.tiene.add(comp);
+	}
+	
+	abstract public int calcularNomina();
+	
+
+
+}

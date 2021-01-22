@@ -1,0 +1,22 @@
+package Presentacion.Command.Empleado;
+
+import Negocio.Empleado.Empleado;
+import Negocio.FactoriaNegocio.FactoriaNegocio;
+import Presentacion.Command.Command;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+public class UpdateEmpleadoCommand implements Command {
+
+	@Override
+	public Contexto ejecutar(Object contexto) {
+		// TODO Auto-generated method stub
+		Empleado e = (Empleado)contexto;
+		int i= FactoriaNegocio.getInstance().generaSAEmpleado().updateEmpleado(e);
+		if(i<1){
+			return new Contexto(Eventos.updateEmpeladoCommandError,i);
+		}else return new Contexto(Eventos.updateEmpeladoCommand, i);
+		
+	}
+
+}

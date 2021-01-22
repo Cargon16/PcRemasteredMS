@@ -1,0 +1,29 @@
+package Integracion.FactoriaIntegracion;
+
+import Integracion.Cliente.DAOClienteImpl;
+import Integracion.Producto.DAOProductoImp;
+import Integracion.Venta.DAOVentaImp;
+
+
+public class FactoriaIntegracionImp extends FactoriaIntegracion{
+
+
+	public DAOClienteImpl crearDAOCliente() {
+		// begin-user-code
+		// TODO Auto-generated method stub
+		return new DAOClienteImpl();
+		// end-user-code
+	}
+
+	public DAOProductoImp crearDAOProducto() {
+		// begin-user-code
+		// TODO Auto-generated method stub
+		return new DAOProductoImp();
+		// end-user-code
+	}
+
+	public DAOVentaImp CrearDAOVenta() {
+		// TODO Auto-generated method stub
+		return new DAOVentaImp();
+	}
+}

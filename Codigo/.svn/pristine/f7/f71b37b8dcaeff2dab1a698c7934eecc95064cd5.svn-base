@@ -1,0 +1,80 @@
+package Integracion.Departamento;
+
+import java.util.List;
+
+import Negocio.Empleado.Empleado;
+
+public class TDepartamento {
+	private Integer idDepartamento;
+
+	private String nombre;
+
+	private List<Empleado> empleado;
+	
+	private float costeDepartamento;
+	
+	private Boolean activo;
+
+	public TDepartamento(Integer idDepartamento, String nombre) {
+		this.idDepartamento = idDepartamento;
+		this.nombre = nombre;
+		this.activo = true;
+	}
+	public TDepartamento(Integer idDepartamento, String nombre, Boolean  activo){
+		this.idDepartamento = idDepartamento;
+		this.nombre = nombre;
+		this.activo = activo;
+	}
+	public TDepartamento(Integer idDepartamento, String nombre, Boolean  activo, float coste){
+		this.idDepartamento = idDepartamento;
+		this.nombre = nombre;
+		this.activo = activo;
+		this.costeDepartamento = coste;
+	}
+	public TDepartamento(String nombre, Boolean activo) {
+		this.nombre = nombre;
+		this.costeDepartamento = (float)0;
+		this.activo = activo;
+	}
+	
+	public TDepartamento(Integer id, String nombre, float coste) {
+		this.idDepartamento = id;
+		this.nombre = nombre;
+		this.costeDepartamento= coste;
+	}
+	public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+	
+	public Integer getIdDepartamento() {
+		return idDepartamento;
+	}
+
+
+	public void setIdDepartamento(Integer idDepartamento) {
+		this.idDepartamento = idDepartamento;
+	}
+
+
+	public String getNombre() {
+		return nombre;
+	}
+
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+
+	public List<Empleado> getEmpleados(){
+		return this.empleado;
+	}
+
+	public float getCosteDept(){
+		return this.costeDepartamento;
+	}
+}

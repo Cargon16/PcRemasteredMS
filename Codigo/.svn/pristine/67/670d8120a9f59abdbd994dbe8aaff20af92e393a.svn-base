@@ -1,0 +1,114 @@
+package Presentacion.Empleado;
+
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import Negocio.Competencia.Competencia;
+import Negocio.Empleado.Empleado;
+import Negocio.Empleado.TiempoCompleto;
+import Negocio.Empleado.TiempoParcial;
+import Negocio.Parseador.Parseador;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+
+public class PanelReadByIdEmpleado extends JPanel implements Ventana{
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+	private JButton button;
+	private JTextArea textArea ;
+	private JScrollPane scroll;
+	
+	public PanelReadByIdEmpleado(){
+		initComponent();
+	}
+	
+	public void initComponent() {
+		setLayout(null);
+		setOpaque(false);
+		button = new JButton("Buscar Empleado");
+		button.setBackground(SystemColor.textHighlight);
+		button.setBounds(434, 68, 171, 42);
+		add(button);
+
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(83, 68, 339, 42);
+		add(textField);
+		textArea = new JTextArea();
+		scroll = new JScrollPane(textArea);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVisible(true);
+		scroll.setBounds(83, 136, 522, 281);
+		add(scroll);
+		textArea.setVisible(false);
+		textArea.setEditable(false);
+
+		JLabel lblIntroduceElId = new JLabel("Introduce el ID");
+		lblIntroduceElId.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblIntroduceElId.setBounds(83, 45, 110, 16);
+		add(lblIntroduceElId);
+
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(Parseador.esNumerico(textField.getText())){
+					Controller.getInstance().ejecutar(new Contexto(Eventos.readEmpleado, textField.getText()));
+					
+				}else{
+	    			JOptionPane.showMessageDialog(null, "Datos incorrectos, el ID a eliminar debe ser un numero");
+	    		}
+				
+
+			}
+		});
+		
+	}
+
+
+	@Override
+	public void resetCamps() {
+		textField.setText(null);
+		textArea.setText(null);
+		
+	}
+
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		textArea.setVisible(true);
+		String s = null;
+		String texto="";
+		Empleado c = (Empleado) contexto.getDatos();
+		float sueldo;
+		if (c.getActivo())
+			s = "Activo";
+		else
+			s = "No activo";
+		if(c instanceof TiempoCompleto) sueldo = ((TiempoCompleto)c).getSueldo();
+		else sueldo = ((TiempoParcial)c).getHorasSemana()*((TiempoParcial)c).getSueldoHora();
+		if (c instanceof TiempoCompleto) {
+			texto = texto+"ID: "+c.getIdEmpleado()+"\n" + "Nombre: "+ c.getNombre() + "\n" + "Telefono: "+ c.getTelefono() + "\n" + "Sueldo: "+ sueldo + "\n" 
+					+"Estado: "+ s +  "\n" +"Departamento: "+ c.getDepartamento().getNombre() +  "\n" ;
+			
+		}else{
+			TiempoParcial emplTP=(TiempoParcial) c;
+			texto = texto+"ID: "+c.getIdEmpleado()+"\n" + "Nombre: "+ c.getNombre() + "\n" + "Telefono: "+ c.getTelefono() + "\n" + "Sueldo: "+ sueldo + "\n" 
+					+"Sueldo hora: "+emplTP.getSueldoHora()+"\n"+ "Horas semana: "+emplTP.getHorasSemana()+"\n"+"Estado: "+ s +  "\n" +"Departamento: "+ c.getDepartamento().getNombre() +  "\n" ;
+		}
+		textArea.setText(texto);
+		
+	}
+}

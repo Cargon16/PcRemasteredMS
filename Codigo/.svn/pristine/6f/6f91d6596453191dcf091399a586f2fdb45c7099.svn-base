@@ -1,0 +1,205 @@
+package Presentacion.Empleado;
+
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTextField;
+
+import Integracion.Departamento.TDepartamento;
+import Integracion.Empleado.TTiempoCompleto;
+import Negocio.Parseador.Parseador;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+import javax.swing.JTextArea;
+
+public class PanelAddEmpTC extends JPanel implements Ventana {
+
+	private static final long serialVersionUID = 1L;
+
+	private JTextField NombreText;
+	private JTextField ContrasenaText;
+	private JTextField telefonoText;
+	private JRadioButton activoRB;
+	private JRadioButton inactivoRB;
+	private JTextField sueldoText;
+	private JTextField textField;
+	private JTextArea listArea;
+	private JButton bottonMostrarDept;
+	
+	public PanelAddEmpTC(){
+		initComponent();
+	}
+	
+	public void initComponent() {
+		setLayout(null);
+		setOpaque(false);
+		NombreText = new JTextField();
+		NombreText.setColumns(10);
+		NombreText.setBounds(142, 82, 241, 32);
+		add(NombreText);
+
+		JLabel label = new JLabel("Nombre");
+		label.setBounds(37, 89, 75, 14);
+		add(label);
+
+		ContrasenaText = new JTextField();
+		ContrasenaText.setColumns(10);
+		ContrasenaText.setBounds(142, 127, 241, 31);
+		add(ContrasenaText);
+
+		JLabel label_1 = new JLabel("Contraseña");
+		label_1.setBounds(37, 133, 95, 14);
+		add(label_1);
+
+		telefonoText = new JTextField();
+		telefonoText.setColumns(10);
+		telefonoText.setBounds(142, 215, 241, 32);
+		add(telefonoText);
+
+		JLabel label_2 = new JLabel("Teléfono");
+		label_2.setBounds(37, 222, 75, 14);
+		add(label_2);
+		
+		sueldoText = new JTextField();
+		sueldoText.setColumns(10);
+		sueldoText.setBounds(142, 171, 241, 31);
+		add(sueldoText);
+
+		JLabel label_4 = new JLabel("Sueldo");
+		label_4.setBounds(37, 177, 75, 14);
+		add(label_4);
+
+
+		activoRB = new JRadioButton("Activo");
+		activoRB.setToolTipText("Activo");
+		activoRB.setBounds(141, 337, 109, 23);
+		activoRB.setOpaque(false);
+		inactivoRB = new JRadioButton("Inactivo");
+		activoRB.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inactivoRB.setSelected(false);
+				activoRB.setSelected(true);
+			}
+		});
+		add(activoRB);
+
+		inactivoRB.setBounds(255, 337, 109, 23);
+		inactivoRB.setOpaque(false);
+		add(inactivoRB);
+		inactivoRB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inactivoRB.setSelected(true);
+				activoRB.setSelected(false);
+			}
+		});
+		JButton button = new JButton("Anadir");
+		button.setBackground(SystemColor.textHighlight);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				boolean ok = false ;
+				if(activoRB.isSelected()) 
+					ok = true;
+				
+				if(Parseador.esAlfabetico(NombreText.getText()) &&  Parseador.esNumerico(telefonoText.getText())){
+					TTiempoCompleto tc = new TTiempoCompleto(Integer.valueOf(telefonoText.getText()), ok, NombreText.getText(), ContrasenaText.getText(),Integer.valueOf(textField.getText()), Integer.valueOf(sueldoText.getText()));
+					tc.setTipoEmpleado("TiempoCompleto");
+					Controller.getInstance().ejecutar(new Contexto(Eventos.addEmpleadoTiempoCompleto, tc));
+				}else{
+					JOptionPane.showMessageDialog(null, "Datos incorrectos, comprueba sintacticamente los datos introducidos.");
+				}
+				
+			}
+		});
+		button.setBounds(174, 369, 132, 40);
+		add(button);
+
+		JLabel lblAadirCliente = new JLabel("Añadir empleado tiempo completo");
+		lblAadirCliente.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblAadirCliente.setBounds(37, 16, 281, 32);
+		add(lblAadirCliente);
+		
+		textField = new JTextField();
+		textField.setBounds(142, 260, 241, 32);
+		add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblDpt = new JLabel("Dpt (ID)");
+		lblDpt.setBounds(37, 266, 95, 16);
+		add(lblDpt);
+		
+		listArea = new JTextArea();
+		listArea.setBounds(398, 82, 221, 206);
+		add(listArea);
+		
+		JLabel lblDepartamentosDisponibles = new JLabel("Departamentos disponibles");
+		lblDepartamentosDisponibles.setBounds(398, 62, 221, 14);
+		add(lblDepartamentosDisponibles);
+		
+		bottonMostrarDept = new JButton("Mostrar");
+		bottonMostrarDept.setBackground(SystemColor.textHighlight);
+		bottonMostrarDept.setBounds(419, 299, 184, 40);
+		bottonMostrarDept.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				Controller.getInstance().ejecutar(new Contexto(Eventos.listaDepartamentos, null));
+			}
+		});
+		add(bottonMostrarDept);
+		
+	
+		
+
+
+	}
+	@Override
+	public void actualizar(Contexto contexto) {
+		this.revalidate();
+		this.repaint();
+	}
+	
+	public void resetCamps(){
+		sueldoText.setText(null);
+		NombreText.setText(null);
+		ContrasenaText.setText(null);
+		telefonoText.setText(null);
+		activoRB.setSelected(false);
+		inactivoRB.setSelected(false);
+		textField.setText(null); 
+		listArea.setText(null);
+	}
+
+	public void actualizarListaDepartamentos(Contexto contexto) {
+		// TODO Auto-generated method stub
+		//Lista de departamentos disponibles
+				@SuppressWarnings("unchecked")
+				List<TDepartamento> listaDept = (List<TDepartamento>) contexto.getDatos();
+				String texto = "";
+				for (TDepartamento c : listaDept) {
+					String s = null;
+					if (c.getActivo())
+						s = "Activo";
+					else
+						s = "No activo";
+					texto = texto + "ID: " + c.getIdDepartamento()+ " Nombre: "+ c.getNombre() + "\n" +"Estado: "+ s +  "\n";
+
+				}
+				listArea.setText(texto);
+				listArea.setEditable(false);
+		
+	}
+}

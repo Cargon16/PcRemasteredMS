@@ -1,0 +1,188 @@
+package Negocio.Producto;
+
+import java.util.ArrayList;
+
+import Integracion.FactoriaIntegracion.FactoriaIntegracion;
+import Integracion.Query.FactoriaQuery;
+import Integracion.TransactionManager.Transaction;
+import Integracion.TransactionManager.TransactionManager;
+import Negocio.Parseador.Parseador;
+
+public class SAProductoImp implements SAProducto {
+
+	@Override
+	public Integer CrearProducto(TProducto producto) {
+		int id = -1;
+		if(producto !=null){
+			String nombre = producto.getNombre();
+			Transaction transaction = TransactionManager.getInstance().newTransaction();
+			if(transaction!=null){
+				TransactionManager.getInstance().getTransaction().start();
+				TProducto productoResultado = FactoriaIntegracion.getInstance().crearDAOProducto().readByNombre(nombre);
+				if(productoResultado ==null){
+					id = FactoriaIntegracion.getInstance().crearDAOProducto().create(producto);
+					if(id==-1){
+						TransactionManager.getInstance().getTransaction().RollBack();
+					}else
+						TransactionManager.getInstance().getTransaction().Commit();
+				}else{
+					if(productoResultado.getStock()==-1){
+						producto.setID(productoResultado.getID());
+						id=FactoriaIntegracion.getInstance().crearDAOProducto().update(producto);
+						if(id == -1){
+							TransactionManager.getInstance().getTransaction().RollBack();
+						}else{
+							id=100;
+							TransactionManager.getInstance().getTransaction().Commit();
+						}
+					}else{
+						id=-1;
+						TransactionManager.getInstance().getTransaction().RollBack();
+					}
+				}
+			}
+			TransactionManager.getInstance().deleteTransaction();
+			
+		}else{
+			id=-1;
+		}
+
+		return id;
+	}
+
+	@Override
+	public Integer BorrarProducto(Integer ID) {
+		
+		TransactionManager.getInstance().newTransaction().start();
+		
+		TProducto prod = FactoriaIntegracion.getInstance().crearDAOProducto().readByID(ID);
+		Integer retorno = -1;
+		if (prod == null) {
+			retorno = -2;
+			TransactionManager.getInstance().getTransaction().RollBack();
+		} else {
+			if (prod.getStock() != -1) {
+				retorno = FactoriaIntegracion.getInstance().crearDAOProducto().delete(ID);
+				TransactionManager.getInstance().getTransaction().Commit();
+			} else
+				TransactionManager.getInstance().getTransaction().RollBack();
+
+		}
+		TransactionManager.getInstance().deleteTransaction();
+		return retorno;
+
+	}
+
+	@Override
+	public Integer UpdateProducto(TProducto producto) {
+		
+		TransactionManager.getInstance().newTransaction().start();
+		Integer retorno = -1;
+		TProducto prod = FactoriaIntegracion.getInstance().crearDAOProducto().readByID(producto.getID());
+		if (prod == null) {
+			TransactionManager.getInstance().getTransaction().RollBack();
+		} else {
+			retorno = FactoriaIntegracion.getInstance().crearDAOProducto().update(producto);
+			if (retorno != -1)
+				TransactionManager.getInstance().getTransaction().Commit();
+			else
+				TransactionManager.getInstance().getTransaction().RollBack();
+
+		}
+		TransactionManager.getInstance().deleteTransaction();
+		return retorno;
+
+	}
+
+	@Override
+	public TProducto readProducto(Integer ID) {
+		TProducto retorno = null;
+		
+		TransactionManager.getInstance().newTransaction().start();
+		retorno = FactoriaIntegracion.getInstance().crearDAOProducto().readByID(ID);
+
+		if (retorno != null) {
+			TransactionManager.getInstance().getTransaction().Commit();
+		} else {
+			TransactionManager.getInstance().getTransaction().RollBack();
+		}
+
+		TransactionManager.getInstance().deleteTransaction();
+		
+
+		return retorno;
+
+	}
+
+	@Override
+	public ArrayList<TProducto> readAllProducto() {
+		
+		TransactionManager.getInstance().newTransaction().start();
+		ArrayList<TProducto> retorno = FactoriaIntegracion.getInstance().crearDAOProducto().readAll();
+		if (retorno != null)
+			TransactionManager.getInstance().getTransaction().Commit();
+		else
+			TransactionManager.getInstance().getTransaction().RollBack();
+
+		TransactionManager.getInstance().deleteTransaction();
+
+		return retorno;
+
+	}
+
+	@Override
+	public TProducto leerProductoPorNombre(String nombre){
+		TProducto retorno = null;
+		
+		TransactionManager.getInstance().newTransaction().start();
+		retorno = FactoriaIntegracion.getInstance().crearDAOProducto().readByNombre(nombre);
+
+		if (retorno != null) {
+			TransactionManager.getInstance().getTransaction().Commit();
+		} else {
+			TransactionManager.getInstance().getTransaction().RollBack();
+		}
+
+		TransactionManager.getInstance().deleteTransaction();
+
+		return retorno;
+	}
+
+	public ArrayList<String> monitoresMasVendidosEnMes(Integer mes){
+		ArrayList<String> productos = new ArrayList<String>();
+		
+		TransactionManager.getInstance().newTransaction().start();
+		if(Parseador.comprobarNumeroPositivo(mes) && mes <= 12){
+			productos = FactoriaQuery.getInstance().generateQueryMonitoresMasCompradosEnUnMes().execute(mes);
+		}
+		if (productos != null) {
+			TransactionManager.getInstance().getTransaction().Commit();
+		} else {
+			TransactionManager.getInstance().getTransaction().RollBack();
+		}
+
+		TransactionManager.getInstance().deleteTransaction();
+
+		return productos;
+
+	}
+
+	public ArrayList<String> ordenadoresMasCompradosPorCliente(Integer id){
+		ArrayList<String> productos = new ArrayList<String>();
+		
+		TransactionManager.getInstance().newTransaction().start();
+		if(Parseador.comprobarNumeroPositivo(id)){
+			productos = FactoriaQuery.getInstance().generateQueryOrdenadoresMasCompradosPorClientes().execute(id);
+		}
+		if (productos != null) {
+			TransactionManager.getInstance().getTransaction().Commit();
+		} else {
+			TransactionManager.getInstance().getTransaction().RollBack();
+		}
+
+		TransactionManager.getInstance().deleteTransaction();
+
+		return productos;
+
+	}
+}

@@ -1,0 +1,24 @@
+package Negocio.Competencia;
+
+import java.util.List;
+
+import Negocio.Empleado.Empleado;
+
+public interface SACompetencia {
+	
+	public Integer crearCompetencia(Competencia competencia);
+
+	public Integer borrarCompetencia(Integer idCompetencia);
+
+	public List<Empleado> mostrarTodosLosEmpleadosQuePoseenCompetencia(Integer id);
+
+	public Competencia readCompetencia(Integer idCompetencia);
+
+	public List<Competencia> readAllCompetencias();
+	
+	public Integer addCompetenciaEmpleado(TieneID competenciaEmpleado, Integer nivel);
+	
+	public Integer deleteCompetenciaEmpleado(TieneID competenciaEmpleado);
+
+
+}

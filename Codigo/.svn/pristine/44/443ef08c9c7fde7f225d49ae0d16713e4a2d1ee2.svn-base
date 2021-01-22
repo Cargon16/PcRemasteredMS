@@ -1,0 +1,192 @@
+/**
+ * 
+ */
+package Presentacion.Ventas;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+
+import Presentacion.Clientes.VentanaClientes;
+import Presentacion.Command.*;
+import Presentacion.Ventas.PanelAbrirVentas;
+import Presentacion.Ventas.PanelReadAllVentas;
+import Presentacion.Ventas.PanelReadVentas;
+import Presentacion.Ventas.panelDevolverVenta;
+
+public class VentanaVentasImp extends VentanaVentas {
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private PanelAbrirVentas anadir;
+	private panelDevolverVenta actualizar;
+	private PanelReadVentas mID;
+	private PanelReadAllVentas mAll;
+	private JButton botonanadir;
+	private JButton botonActualizar;
+	private JButton botonMostrarID;
+	private JButton botonMostrarTodo;
+
+	public VentanaVentasImp(){
+
+		initComponent();
+	}
+
+	public void initPanel(){
+
+		anadir = new PanelAbrirVentas();
+		actualizar = new panelDevolverVenta();
+		mID = new PanelReadVentas();
+		mAll = new PanelReadAllVentas();
+		contentPane = new JPanel();
+
+	}
+	public void initComponent() {
+		initPanel();
+
+		setResizable(false);
+		setVisible(true);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 737, 598);
+
+
+		//contentPane.setBackground(new Color(204, 255, 255));
+		contentPane.setBackground(SystemColor.activeCaption);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(5, 5, 706, 93);
+		contentPane.add(panel_1);
+		panel_1.setLayout(new GridLayout(1, 1, 0, 0));
+
+		final JPanel panel2 = new JPanel();
+		panel2.setOpaque(false);
+		panel2.setBounds(5, 109, 706, 439);
+		contentPane.add(panel2);
+		panel2.setLayout(new BorderLayout(0, 0));
+
+		final ArrayList<JPanel> paneles = new ArrayList<JPanel>();
+		anadir.setVisible(true);
+		paneles.add(anadir);
+
+		actualizar.setVisible(true);
+		paneles.add(actualizar);
+
+		mID.setVisible(true);
+		paneles.add(mID);
+
+		mAll.setVisible(true);
+		paneles.add(mAll);
+
+
+		botonanadir = new JButton("Abrir Venta");
+
+		botonanadir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Abrir Venta");
+				anadir.resetCamps();
+				panel2.add(paneles.get(0),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane()); 
+
+
+
+			}
+		});
+		panel_1.add(botonanadir);
+
+		botonActualizar = new JButton("<html>Devolver<br /> Venta</html>");
+		botonActualizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				panel2.removeAll();
+				setTitle("Devolver Venta");
+				actualizar.resetCamps();
+				panel2.add(paneles.get(1),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane()); 
+
+			}
+		});
+		panel_1.add(botonActualizar);
+
+		botonMostrarID = new JButton("<html>Mostrar Venta<br /> por su ID </html>");
+
+		botonMostrarID.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Mostrar Venta por ID");
+				mID.resetCamps();
+				panel2.add(paneles.get(2),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(botonMostrarID);
+
+		botonMostrarTodo = new JButton("<html>Mostrar todas<br /> las ventas</html>");
+
+		botonMostrarTodo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Mostrar todas las ventas ");
+				mAll.resetCamps();
+				panel2.add(paneles.get(3),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(botonMostrarTodo);
+		setLocationRelativeTo(null);
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				System.out.println("Closed");
+				VentanaVentas.setInstance(null);        }
+		});
+	}
+
+	@Override
+	public void resetCamps() {
+
+
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		switch (contexto.getEvento()) {
+		case Eventos.procesarVentaCommandError: JOptionPane.showMessageDialog(null, "Error al procesar la venta");break;
+		case Eventos.abrirVentaCommand:anadir.actualizar(contexto);break;
+		case Eventos.addProductoVentaCommand:JOptionPane.showMessageDialog(null, "Producto añadido correctamente");anadir.actualizar(contexto);break;
+		case Eventos.deleteProductoVentaCommand:JOptionPane.showMessageDialog(null, "Producto eliminado correctamente");anadir.actualizar(contexto);break;
+		case Eventos.deleteProductoVentaCommandError:break;
+		case Eventos.addProductoVentaCommandError: JOptionPane.showMessageDialog(null, "No existe producto con ese ID");break;
+		case Eventos.pagoProductoVentaCommand: JOptionPane.showMessageDialog(null, "Venta procesada");break;
+		case Eventos.createVentaCommandError: JOptionPane.showMessageDialog(null, "No existe cliente con ese ID");break;
+		case Eventos.deleteVentaCommand:JOptionPane.showMessageDialog(null, "Se ha eliminado la venta con id" +contexto.getDatos() + "\n existosamente") ;break;
+		case Eventos.deleteVentaCommandError:JOptionPane.showMessageDialog(null, "Error al procesar la devolución") ;break;
+		case Eventos.readVentaCommand: mID.actualizar(contexto);; break;
+		case Eventos.readVentaCommandError:JOptionPane.showMessageDialog(null, "No existe la venta");break;
+		case Eventos.readAllVentaCommand : mAll.actualizar(contexto); break;
+		case Eventos.readAllVentaCommandError: JOptionPane.showMessageDialog(null, "No hay ventas registrados \n en la base de datos");break;
+		default:
+			break;
+		}
+	}
+}

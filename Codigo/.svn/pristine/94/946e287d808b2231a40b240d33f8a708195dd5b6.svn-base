@@ -1,0 +1,108 @@
+/**
+ * 
+ */
+package Presentacion.Factorias;
+
+import Presentacion.Command.Command;
+import Presentacion.Command.Evento;
+import Presentacion.Command.Cliente.CreateClienteCommand;
+import Presentacion.Command.Cliente.DeleteClienteCommand;
+import Presentacion.Command.Cliente.ReadAllClienteCommand;
+import Presentacion.Command.Cliente.ReadClienteCommand;
+import Presentacion.Command.Cliente.UpdateClienteCommand;
+import Presentacion.Command.Producto.CreateProductosCommand;
+import Presentacion.Command.Producto.DeleteProductosCommand;
+import Presentacion.Command.Producto.QuerieMonitorCommand;
+import Presentacion.Command.Producto.QuerieOrdenadorCommand;
+import Presentacion.Command.Producto.ReadAllProductosCommand;
+import Presentacion.Command.Producto.ReadByIdProductosCommand;
+import Presentacion.Command.Producto.ReadProductosCommand;
+import Presentacion.Command.Producto.UpdateProductosCommand;
+import Presentacion.Command.Ventas.AbrirVentaCommand;
+import Presentacion.Command.Ventas.AnadirProductoVentaCommand;
+import Presentacion.Command.Ventas.CreateVentasCommand;
+import Presentacion.Command.Ventas.DeleteVentasCommand;
+import Presentacion.Command.Ventas.EliminarProductoVentaCommand;
+import Presentacion.Command.Ventas.PagoProductoVentaCommand;
+import Presentacion.Command.Ventas.ProcesarCompraCommand;
+import Presentacion.Command.Ventas.ReadAllVentasCommand;
+import Presentacion.Command.Ventas.ReadVentasCommand;
+import Presentacion.Command.Vista.InitCommand;
+import Presentacion.Command.Vista.VentanaClienteCommand;
+import Presentacion.Command.Vista.VentanaPagoCommand;
+import Presentacion.Command.Vista.VentanaProductosCommand;
+import Presentacion.Command.Vista.VentanaVentasCommand;
+
+/**
+ * <!-- begin-UML-doc --> <!-- end-UML-doc -->
+ * 
+ * @author agoni
+ * @generated "UML a Java
+ *            (com.ibm.xtools.transform.uml2.java5.internal.UML2JavaTransform)"
+ */
+public class FactoriaCommandsImp extends FactoriaCommands {
+
+	public Command generacionCommand(Evento evento) {
+		@SuppressWarnings("unused")
+		Command c = null;
+		switch (evento) {
+		case INIT:
+			return new InitCommand();
+		case VentanaCliente:
+			//return new VentanaClienteCommand();
+		case createClienteCommand:
+			//eturn new CreateClienteCommand();
+		case deleteClienteCommand:
+			//return new DeleteClienteCommand();
+		case readAllClienteCommand:
+			//return new ReadAllClienteCommand();
+		case readClienteCommand:
+			//eturn new ReadClienteCommand();
+		case updateClienteCommand:
+			//return new UpdateClienteCommand();
+		case crearVentanaProductos:
+			//return new VentanaProductosCommand();
+		case createProductoCommand:
+			//return new CreateProductosCommand();
+		case deleteProductoCommand:
+			//return new DeleteProductosCommand();
+		case readAllProductoCommand:
+			//return new ReadAllProductosCommand();
+		case readByIDProductosCommand:
+			//return new ReadByIdProductosCommand();
+		case readProductoCommand:
+			//return new ReadProductosCommand();
+		case updateProductoCommand:
+			//return new UpdateProductosCommand();
+		case crearVentanaVentas:
+			//return new VentanaVentasCommand();
+		case createVentasCommand:
+			//return new CreateVentasCommand();
+		case deleteVentasCommand:
+			//return new DeleteVentasCommand();
+		case readAllVentasCommand:
+			//return new ReadAllVentasCommand();
+		case readVentasCommand:
+			//return new ReadVentasCommand();
+		case abrirVentaCommand:
+			//return new AbrirVentaCommand();
+		case addProductoVentaCommand:
+			//return new AnadirProductoVentaCommand();
+		case DeleteProductoVentaCommand:
+			//return new EliminarProductoVentaCommand();
+		case procesarVenta:
+			//return new ProcesarCompraCommand();
+		case crearVentanaPago:
+			//return new VentanaPagoCommand();
+		case PagoProductoVentaCommand:
+			//return new PagoProductoVentaCommand();
+		case querieOrdenadorCommand:
+			//return new QuerieOrdenadorCommand();
+		case querieMonitorCommand:
+			//	return new QuerieMonitorCommand();
+		default:
+			return null;
+
+		}
+	}
+}

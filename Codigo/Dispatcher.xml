@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events>
+
+
+	<!-- Ventanas principales -->
+	<event id="1000">Presentacion.IGUI.VentanaPrincipalImp</event>
+	<event id="901">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="902">Presentacion.Ventas.VentanaVentasImp</event>
+	<event id="903">Presentacion.Ventas.PanelPago</event>
+	<event id="904">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="905">Presentacion.Empleado.VentanaEmpleadosImp</event>
+	<event id="906">Presentacion.Departamento.VentanaDepartamentosImp
+	</event>
+	<event id="907">Presentacion.Competencia.VentanaCompetenciasImp</event>
+	<!--Cliente -->
+	<event id="101">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="102">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="103">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="104">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="105">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="1001">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="1002">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="1003">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="1004">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="1005">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="10001">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="10002">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="10003">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="10004">Presentacion.Clientes.VentanaClientesImp</event>
+	<event id="10005">Presentacion.Clientes.VentanaClientesImp</event>
+	<!-- Producto -->
+
+	<event id="201">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="202">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="203">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="204">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="205">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="206">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="207">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="208">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="209">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="210">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2001">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2002">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2003">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2004">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2005">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2006">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2007">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2008">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2009">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="2010">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20001">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20002">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20003">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20004">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20005">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20006">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20007">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20008">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20009">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20010">Presentacion.Productos.VentanaProductosImp</event>
+	<event id="20011">Presentacion.Productos.VentanaProductosImp</event>
+	<!-- Ventas -->
+	<event id="301">Presentacion.Ventas.VentanaVentas</event>
+	<event id="302">Presentacion.Ventas.VentanaVentas</event>
+	<event id="303">Presentacion.Ventas.VentanaVentas</event>
+	<event id="304">Presentacion.Ventas.VentanaVentas</event>
+	<event id="305">Presentacion.Ventas.VentanaVentas</event>
+	<event id="306">Presentacion.Ventas.VentanaVentas</event>
+	<event id="307">Presentacion.Ventas.VentanaVentas</event>
+	<event id="308">Presentacion.Ventas.VentanaVentas</event>
+	<event id="309">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3001">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3002">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3003">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3004">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3005">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3006">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3007">Presentacion.Ventas.PanelPago</event>
+	<event id="3008">Presentacion.Ventas.VentanaVentas</event>
+	<event id="3009">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30001">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30002">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30003">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30004">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30005">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30006">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30007">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30008">Presentacion.Ventas.VentanaVentas</event>
+	<event id="30009">Presentacion.Ventas.VentanaVentas</event>
+	<!-- Competencia -->
+	<event id="401">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="402">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="403">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="404">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="405">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="406">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="407">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4001">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4002">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4003">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4004">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4005">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4006">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="4007">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40001">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40002">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40003">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40004">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40005">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40006">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40007">Presentacion.Competencia.VentanaCompetencias</event>
+	<event id="40008">Presentacion.Competencia.VentanaCompetencias</event>
+
+	<!-- Departamento -->
+	<event id="501">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="502">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="503">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="504">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="505">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="506">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5001">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5002">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5003">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5004">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5005">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5006">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="5007">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50001">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50002">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50003">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50004">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50005">Presentacion.Departamento.VentanaDepartamento</event>
+	<event id="50006">Presentacion.Departamento.VentanaDepartamento</event>
+	
+	
+	<!-- Empleados -->
+	<event id="601">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="602">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="603">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="604">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="605">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="606">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="607">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6001">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6002">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6003">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6004">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6005">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6006">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="6007">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60001">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60002">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60003">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60004">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60005">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60006">Presentacion.Empleado.VentanaEmpleados</event>
+	<event id="60007">Presentacion.Empleado.VentanaEmpleados</event>
+
+</events>

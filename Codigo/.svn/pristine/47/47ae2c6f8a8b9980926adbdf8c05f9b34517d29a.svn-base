@@ -1,0 +1,21 @@
+package Negocio.Departamento;
+
+import java.util.List;
+
+
+public interface SADepartamento {
+	
+	public Integer crearDepartamento(Departamento departamento);
+
+	public Integer borrarDepartamento(Integer idDepartamento);
+
+	public Integer updateDepartamento(Departamento departamento);
+
+	public Departamento readDepartamento(Integer idDepartamento);
+
+	public List<Departamento> readAllDepartamentos();
+	
+	public int calcularCosteDepartamento(int id);
+
+	
+}

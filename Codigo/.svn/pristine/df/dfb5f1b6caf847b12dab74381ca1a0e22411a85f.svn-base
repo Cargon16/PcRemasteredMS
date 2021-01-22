@@ -1,0 +1,130 @@
+package Negocio.Departamento;
+
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Version;
+
+import Negocio.Empleado.Empleado;
+import Negocio.Empleado.TiempoCompleto;
+import Negocio.Empleado.TiempoParcial;
+
+@Entity
+@NamedQueries({
+	@NamedQuery(name = "Negocio.Departamento.Departamento.readAll", query = "select obj from Departamento obj where obj.activo = 1"),
+	@NamedQuery(name = "Negocio.Departamento.Departamento.findBynombre", query = "select obj from Departamento obj where obj.nombre = :nombre")
+	
+})
+public class Departamento implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Integer idDepartamento;
+
+	@Version
+	private int version;
+	
+	private String nombre;
+	
+	private Float costeDepartamento;
+	
+	@OneToMany(mappedBy = "departamento")
+	private List<Empleado> empleado;
+	
+	private Boolean activo;
+	
+	public Departamento(){}
+
+	public Departamento(Integer idDepartamento, String nombre, Float costeDepartamento) {
+		super();
+		this.idDepartamento = idDepartamento;
+		this.nombre = nombre;
+		this.costeDepartamento = costeDepartamento;
+		this.activo = true;
+	}
+	public Departamento(String nombre, Boolean activo) {
+		super();
+		this.nombre = nombre;
+		this.costeDepartamento = (float)0;
+		this.activo = activo;
+	}
+	
+	
+	public Boolean getActivo() {
+		return activo;
+	}
+
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
+
+	public Departamento(String nombre, Float costeDepartamento) {
+		super();
+		this.nombre = nombre;
+		this.costeDepartamento = costeDepartamento;
+	}
+	
+	
+	public Integer getIdDepartamento() {
+		return idDepartamento;
+	}
+
+
+	public void setIdDepartamento(Integer idDepartamento) {
+		this.idDepartamento = idDepartamento;
+	}
+
+
+	public String getNombre() {
+		return nombre;
+	}
+
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+
+	public Float getCosteDepartamento() {
+		return costeDepartamento;
+	}
+
+
+	public void setCosteDepartamento(Float costeDepartamento) {
+		this.costeDepartamento = costeDepartamento;
+	}
+	
+	@Override
+	public String toString() {
+		return "TDepartamento [idDepartamento=" + idDepartamento + ", nombre=" + nombre
+				+ ", costeDepartamento=" + costeDepartamento + "]";
+	}
+
+	public int calcularCostDepartamento(){
+		int coste=0;
+		Iterator<Empleado> itEmpleado = this.empleado.iterator();
+		Empleado empleado;
+		while(itEmpleado.hasNext()){
+			empleado = itEmpleado.next();
+			Boolean emplActi = empleado.getActivo();
+			if(emplActi){
+				if(empleado instanceof TiempoParcial) coste += (((TiempoParcial) empleado).getHorasSemana()*((TiempoParcial) empleado).getSueldoHora());
+				else coste+= ((TiempoCompleto) empleado).getSueldo();
+				setCosteDepartamento((float) coste);
+			}
+			
+		}
+		return coste;
+	}
+
+
+
+}

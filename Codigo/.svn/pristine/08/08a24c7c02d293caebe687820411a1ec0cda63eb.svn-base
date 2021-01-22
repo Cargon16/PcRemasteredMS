@@ -1,0 +1,242 @@
+package Negocio.Venta;
+
+import java.util.ArrayList;
+
+import Integracion.FactoriaIntegracion.FactoriaIntegracion;
+import Integracion.TransactionManager.TransactionManager;
+import Negocio.Cliente.TCliente;
+import Negocio.Parseador.Parseador;
+import Negocio.Producto.TProducto;
+
+public class SAVentaImp implements SAVenta {
+
+	@SuppressWarnings("static-access")
+	@Override
+	public TVenta crearVenta(Integer idCliente) {
+		TransactionManager.getInstance().newTransaction().start();
+
+		TVenta retorno = null;
+		Parseador parseador = new Parseador();
+		if (parseador.comprobarNumeroPositivo(idCliente)) {
+			TCliente cliente = FactoriaIntegracion.getInstance().crearDAOCliente().readByID(idCliente);
+
+			if (cliente != null) {
+				retorno = new TVenta(idCliente);
+			}
+		}
+		TransactionManager.getInstance().getTransaction().Commit();
+		TransactionManager.getInstance().deleteTransaction();
+
+		return retorno;
+
+	}
+
+	@Override
+	public Integer borrarVenta(Integer ID) {
+		int retorno = -1;
+		if (Parseador.comprobarNumeroPositivo(ID)) {
+
+			TransactionManager.getInstance().newTransaction().start();
+			TVenta venta = FactoriaIntegracion.getInstance().CrearDAOVenta().read(ID);
+			if (venta != null && venta.getPagado()) {
+				retorno = FactoriaIntegracion.getInstance().CrearDAOVenta().delete(ID);
+				if (retorno != -1) {
+					for (LineaVenta l : venta.getLineaVentas().values()) {
+						TProducto producto = FactoriaIntegracion.getInstance().crearDAOProducto()
+								.readByID(l.getIDProducto());
+						if (producto.getStock() != -1){
+							producto.setStock(producto.getStock() + l.getCantidad());
+							FactoriaIntegracion.getInstance().crearDAOProducto().update(producto);
+						}
+					}
+					TransactionManager.getInstance().getTransaction().Commit();
+				} else {
+					retorno = -1;
+					TransactionManager.getInstance().getTransaction().RollBack();
+				}
+			} else {
+				if (venta != null)
+					// La venta no existe
+					retorno = -2;
+				else
+					// La venta ya estaba inactiva
+					retorno = -3;
+				TransactionManager.getInstance().getTransaction().RollBack();
+			}
+
+			TransactionManager.getInstance().deleteTransaction();
+
+		} else {
+			// El id no es válido
+			retorno = -4;
+		}
+		TransactionManager.getInstance().deleteTransaction();
+		return retorno;
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public TVentaDetalles leerVenta(Integer ID) {
+		TVentaDetalles retorno = null;
+		TVenta v = null;
+		Parseador parseador = new Parseador();
+		if (parseador.comprobarNumeroPositivo(ID)) {
+
+			TransactionManager.getInstance().newTransaction().start();
+			v = FactoriaIntegracion.getInstance().CrearDAOVenta().read(ID);
+
+			if (v != null) {
+				TCliente c = FactoriaIntegracion.getInstance().crearDAOCliente().readByID(v.getIdCliente());
+				retorno = new TVentaDetalles(c, v);
+				TransactionManager.getInstance().getTransaction().Commit();
+
+			} else {
+				retorno = null;
+				TransactionManager.getInstance().getTransaction().RollBack();
+			}
+		}
+		TransactionManager.getInstance().deleteTransaction();
+		return retorno;
+	}
+
+	@Override
+	public ArrayList<TVentaDetalles> leerTodosVenta() {
+		ArrayList<TVentaDetalles> retorno = new ArrayList<TVentaDetalles>();
+		TransactionManager.getInstance().newTransaction().start();
+		ArrayList<TVenta> ventas = FactoriaIntegracion.getInstance().CrearDAOVenta().readAll();
+		if (ventas != null) {
+			for (TVenta v : ventas) {
+				TCliente c = FactoriaIntegracion.getInstance().crearDAOCliente().readByID(v.getIdCliente());
+				TVentaDetalles t = new TVentaDetalles(c, v);
+				retorno.add(t);
+			}
+			TransactionManager.getInstance().getTransaction().Commit();
+
+		} else
+			TransactionManager.getInstance().getTransaction().RollBack(); // 105
+		TransactionManager.getInstance().deleteTransaction();
+		return retorno;
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public TVenta eliminarProductoVenta(TVenta venta, Integer IdProducto) {
+		Parseador parseador = new Parseador();
+		TVenta retorno = null;
+		if (parseador.comprobarNumeroPositivo(IdProducto) && venta != null) {
+
+			if (venta.getLineaVentas().containsKey(IdProducto)) {
+				venta.getLineaVentas().remove(IdProducto);
+				retorno = venta;
+			}
+			
+		}
+		return retorno;
+
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public TVenta addProductoVenta(TVenta venta, Integer IdProducto, Integer cantidad) {
+		Parseador parseador = new Parseador();
+		if (parseador.comprobarNumeroPositivo(IdProducto) && parseador.comprobarNumeroPositivo(cantidad)) {
+
+			if (venta != null) {
+				if (venta.getLineaVentas().containsKey(IdProducto)) {
+					LineaVenta l = venta.getLineaVentas().get(IdProducto);
+					l.setCantidad(l.getCantidad() + cantidad);
+				} else {
+					LineaVenta l = new LineaVenta(IdProducto, venta.getIDVenta(), (float) 0, cantidad);
+					venta.getLineaVentas().put(IdProducto, l);
+				}
+			}
+		} else {
+			venta = null;
+		}
+
+		return venta;
+	}
+
+	@SuppressWarnings("static-access")
+	@Override
+	public Integer cerrarVenta(TVenta venta) {
+		int retorno = -1;
+		Parseador parseador = new Parseador();
+		if (venta != null) {
+
+			TransactionManager.getInstance().newTransaction().start();
+			Integer idCliente = venta.getIdCliente();
+			TCliente cliente = FactoriaIntegracion.getInstance().crearDAOCliente().readByID(idCliente);
+			float precio = 0;
+			if (cliente != null && cliente.getActivo() && !venta.getLineaVentas().isEmpty()) {
+				boolean productosCorrectos = true;
+				for (int i : venta.getLineaVentas().keySet()) {
+					TProducto producto = FactoriaIntegracion.getInstance().crearDAOProducto().readByID(i);
+					if (producto != null && producto.getStock() != -1) {
+						if (producto.getStock() < venta.getLineaVentas().get(i).getCantidad()
+								|| !parseador.comprobarNumeroPositivo(venta.getLineaVentas().get(i).getCantidad())) {
+							retorno = -2;
+							productosCorrectos = false;
+						} else {
+							producto.setStock(producto.getStock() - venta.getLineaVentas().get(i).getCantidad());
+							precio += (venta.getLineaVentas().get(i).getCantidad() * producto.getPrecio());
+							FactoriaIntegracion.getInstance().crearDAOProducto().update(producto);
+						}
+					} else {
+						retorno = -3;
+						productosCorrectos = false;
+					}
+				}
+				if (productosCorrectos) {
+					venta.setPrecioTotal(precio);
+					retorno = FactoriaIntegracion.getInstance().CrearDAOVenta().create(venta);
+					if (retorno != -1) {
+						TransactionManager.getInstance().getTransaction().Commit();
+
+					} else {
+						TransactionManager.getInstance().getTransaction().RollBack();
+					}
+				} else {
+					TransactionManager.getInstance().getTransaction().RollBack();
+				}
+			} else {
+				retorno = -4;
+				TransactionManager.getInstance().getTransaction().RollBack();
+
+			}
+			TransactionManager.getInstance().deleteTransaction();
+		}
+		return retorno;
+	}
+
+	@SuppressWarnings({ "static-access", "unused" })
+	@Override
+	public Integer pagarVenta(Integer idVenta) {
+		TVenta v = null;
+		Integer retorno = -1;
+		Parseador parseador = new Parseador();
+		if (parseador.comprobarNumeroPositivo(idVenta)) {
+
+			TransactionManager.getInstance().newTransaction().start();
+			v = FactoriaIntegracion.getInstance().CrearDAOVenta().read(idVenta);
+
+			if (retorno != null) {
+				if (!v.getPagado()) {
+					v.setPagado(true);
+					retorno = FactoriaIntegracion.getInstance().CrearDAOVenta().updateVenta(v);
+					TransactionManager.getInstance().getTransaction().Commit();
+				} else
+					retorno = -2;
+
+			} else {
+				retorno = -1;
+				TransactionManager.getInstance().getTransaction().RollBack();
+			}
+			TransactionManager.getInstance().deleteTransaction();
+		}
+
+		return retorno;
+
+	}
+
+}

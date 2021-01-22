@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+
+
+	<command id="101">Presentacion.Command.Cliente.CreateClienteCommand
+	</command>
+	<command id="102">Presentacion.Command.Cliente.UpdateClienteCommand
+	</command>
+	<command id="103">Presentacion.Command.Cliente.ReadAllClienteCommand
+	</command>
+	<command id="104">Presentacion.Command.Cliente.DeleteClienteCommand
+	</command>
+	<command id="105">Presentacion.Command.Cliente.ReadClienteCommand
+	</command>
+
+	<command id="201">Presentacion.Command.Producto.CreateProductosCommand
+	</command>
+	<command id="204">Presentacion.Command.Producto.QuerieMonitorCommand
+	</command>
+	<command id="205">Presentacion.Command.Producto.QuerieOrdenadorCommand
+	</command>
+	<command id="206">Presentacion.Command.Producto.UpdateProductosCommand
+	</command>
+	<command id="207">Presentacion.Command.Producto.ReadAllProductosCommand
+	</command>
+	<command id="208">Presentacion.Command.Producto.DeleteProductosCommand
+	</command>
+	<command id="209">Presentacion.Command.Producto.ReadProductosCommand
+	</command>
+	<command id="210">Presentacion.Command.Producto.ReadByIdProductosCommand
+	</command>
+
+	<command id="301">Presentacion.Command.Ventas.AbrirVentaCommand
+	</command>
+	<command id="302">Presentacion.Command.Ventas.AnadirProductoVentaCommand
+	</command>
+	<command id="303">Presentacion.Command.Ventas.CreateVentasCommand
+	</command>
+	<command id="304">Presentacion.Command.Ventas.DeleteVentasCommand
+	</command>
+	<command id="305">Presentacion.Command.Ventas.EliminarProductoVentaCommand
+	</command>
+	<command id="306">Presentacion.Command.Ventas.PagoProductoVentaCommand
+	</command>
+	<command id="307">Presentacion.Command.Ventas.ProcesarCompraCommand
+	</command>
+	<command id="308">Presentacion.Command.Ventas.ReadAllVentasCommand
+	</command>
+	<command id="309">Presentacion.Command.Ventas.ReadVentasCommand
+	</command>
+
+	<command id="401">Presentacion.Command.Competencia.CreateCompetenciaCommand
+	</command>
+	<command id="402">Presentacion.Command.Competencia.BorrarCompetenciaCommand
+	</command>
+	<command id="403">Presentacion.Command.Competencia.MostrarEmpleadosQuePoseenCompetenciaCommand
+	</command>
+	<command id="404">Presentacion.Command.Competencia.ReadCompetenciaCommand
+	</command>
+	<command id="405">Presentacion.Command.Competencia.ReadAllCompetenciaCommand
+	</command>
+	<command id="406">Presentacion.Command.Competencia.addCompetenciaEmpleadoCommand
+	</command>
+	<command id="407">Presentacion.Command.Competencia.delCompetenciaEmpleadoCommand
+	</command>
+
+	<command id="501">Presentacion.Command.Departamento.CreateDepartamentoCommand
+	</command>
+	<command id="502">Presentacion.Command.Departamento.DeleteDepartamentoCommand
+	</command>
+	<command id="503">Presentacion.Command.Departamento.UpdateDepartamentoCommand
+	</command>
+	<command id="504">Presentacion.Command.Departamento.ReadDepartamentoCommand
+	</command>
+	<command id="505">Presentacion.Command.Departamento.ReadAllDepartamentoCommand
+	</command>
+	<command id="506">Presentacion.Command.Departamento.CosteDepartamentoCommand
+	</command>
+
+	<command id="601">Presentacion.Command.Empleado.AddEmpleadoTiempoParcialCommand
+	</command>
+	<command id="602">Presentacion.Command.Empleado.AddEmpleadoTiempoCompletoCommand
+	</command>
+	<command id="603">Presentacion.Command.Empleado.DeleteEmpleadoCommand
+	</command>
+	<command id="604">Presentacion.Command.Empleado.UpdateEmpleadoCommand
+	</command>
+	<command id="605">Presentacion.Command.Empleado.ReadEmpleadoCommand
+	</command>
+	<command id="606">Presentacion.Command.Empleado.ReadAllEmpleadoCommand
+	</command>
+	<command id="607">Presentacion.Command.Empleado.ListaDepartamentosAddEmpleado
+	</command>
+</commands>

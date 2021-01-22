@@ -1,0 +1,217 @@
+package Test;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+import Integracion.Departamento.TDepartamento;
+import Integracion.Empleado.TEmpleado;
+import Integracion.Empleado.TTiempoCompleto;
+import Negocio.Departamento.SADepartamento;
+import Negocio.Departamento.SADepartamentoImpl;
+import Negocio.Empleado.SAEmpleado;
+import Negocio.Empleado.SAEmpleadoImpl;
+
+public class TestDepartamento {
+	TDepartamento dep;
+	TEmpleado emp;
+	SADepartamento saD = new SADepartamentoImpl();
+	SAEmpleado saE = new SAEmpleadoImpl();
+	
+
+	@Test
+	public void testCreatePassed() {
+		// creamos primero un departamento
+		dep = new TDepartamento("departamentoNuevo", true);
+
+		// lo creamos
+		int codigo = saD.crearDepartamento(dep);
+		
+		// comprobamos que se ha subido (lo leemos)
+		TDepartamento comprobar = saD.readDepartamento(codigo);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+
+		saD.borrarDepartamento(codigo); // para dejar la bbdd como estaba
+	}
+
+	@Test
+	public void testCreateFailed() {
+		// tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> el departamento que se intenta crear es nulo;
+		// -2 --> el nombre del departamento no es correcto sintacticamente
+		// -3 --> el departamento ya existe y esta activo
+
+		// -1:
+		// intentamos crear un departamento nulo
+
+		dep = null;
+		int codigoError = saD.crearDepartamento(dep);
+		assertEquals(codigoError, -1);
+
+		// -2:
+		// intentamos crear un departamento con datos no sintacticamente
+		// correctos
+		dep = new TDepartamento("123", true);
+		codigoError = saD.crearDepartamento(dep);
+		assertEquals(codigoError, -2);
+
+		// -3:
+		// intentamos crear un departamento ya existente y activo
+		// creamos primero un departamento
+		dep = new TDepartamento("departamento", true);
+
+		// lo creamos
+		int codigo = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		TDepartamento comprobar = saD.readDepartamento(codigo);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+
+		// probamos ahora a resubirlo
+		codigoError = saD.crearDepartamento(dep);
+		assertEquals(codigoError, -3);
+
+		saD.borrarDepartamento(codigo); // para dejar la bbdd como estaba
+	}
+
+	@Test
+	public void testDeletePassed() {
+		// probamos a eliminar un departamento (poner a no activo)
+		// creamos primero un departamento
+		dep = new TDepartamento("departamentoOk", true);
+
+		// lo creamos
+		int codigo = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		TDepartamento comprobar = saD.readDepartamento(codigo);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+		
+		//probamos ahora a eliminarlo
+		int codigoEliminado = saD.borrarDepartamento(codigo);
+		
+		assertEquals(codigoEliminado, codigo); //comprobamos que devuelve id correcto
+		assertEquals(false, saD.readDepartamento(codigo).getActivo()); //comprobamos que esta inactivo
+		
+		
+	}
+
+	@Test
+	public void testDeleteFailed() {
+		// tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> el id del departamento a eliminar no es un numero positivo(datos sintacticamente no correctos);
+		// -2 --> el departamento a eliminar no existe en BDDD
+		// -3 --> el departamento ya está eliminado (se encuentra en inactivo)
+		// -4 --> el departamento tiene empleados asociados
+		
+		// -1:
+		//creamos un departamento con un id no positivo
+		dep = new TDepartamento("departamentoDF", true);
+		dep.setIdDepartamento(-1);
+		int codigoError = saD.borrarDepartamento(dep.getIdDepartamento());
+		assertEquals(codigoError, -1);
+		
+		// -2:
+		//intentamos eliminar un departamento no existente
+		//encontramos primero un id de departamento que no existe
+		int i = 0;
+		boolean seguir = true;
+		while (seguir) {
+			dep = saD.readDepartamento(i);
+			if (dep == null) seguir = false;
+			i++;
+		}
+		
+		//ahora pasamos a intentar eliminarlo
+		 codigoError = saD.borrarDepartamento(i);
+		 assertEquals(codigoError, -2); //comprobamos que devuelve el codigo de error
+		 
+		 // -3:
+		// creamos primero un departamento
+		dep = new TDepartamento("departamentoBorrar", true);
+
+		// lo creamos
+		int codigo = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		TDepartamento comprobar = saD.readDepartamento(codigo);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+			
+		//probamos ahora a eliminarlo
+		int codigoEliminado = saD.borrarDepartamento(codigo);
+			
+		assertEquals(codigoEliminado, codigo); //comprobamos que devuelve id correcto
+		assertEquals(false, saD.readDepartamento(codigo).getActivo()); //comprobamos que esta inactivo
+		
+		//probamos ahora a eliminarlo de nuevo
+		codigoError = saD.borrarDepartamento(codigo);
+		assertEquals(codigoError, -3); //comprobamos que devuelve el codigo de error
+		
+		// -4:
+		//creamos el mismo departamento y le asociamos empleados (subimos un empleado con este departamento)
+		dep = new TDepartamento("departamentoBorrar", true);
+
+		// lo creamos
+		int idDepartamento = saD.crearDepartamento(dep);
+		
+		//creamos ahora un empleado
+		emp = new TTiempoCompleto(123456789, true, "nombre", "password", codigo, 100);
+		emp.setTipoEmpleado("TiempoCompleto");
+		//lo creamos
+		int codigoEmp = saE.crearEmpleado(emp);
+		
+		//probamos ahora a intentar eliminar el departamento con empleados asociados
+		
+		codigoError = saD.borrarDepartamento(codigo);
+		assertEquals(codigoError, -4);
+		
+		
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(idDepartamento); //para mantener la bbdd como estaba antes
+	
+	}
+
+	@Test
+	public void testUpdatePassed() {
+		// creamos primero un departamento
+		dep = new TDepartamento("departamentoUpdate", true);
+
+		// lo creamos
+		int codigo = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		TDepartamento comprobar = saD.readDepartamento(codigo);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+		
+		//probamos ahora a intentar actualizarlo
+		comprobar.setNombre("cambiado");
+		codigo = saD.updateDepartamento(comprobar);
+		
+		comprobar = saD.readDepartamento(codigo); //cargamos el nuevo de la bbdd
+		assertEquals(comprobar.getNombre(), "cambiado");
+		
+		comprobar.setNombre("departamento"); //para que reactive siempre el mismo y no cree uno nuevo cada vez
+		saD.updateDepartamento(comprobar);
+		saD.borrarDepartamento(comprobar.getIdDepartamento());
+		
+	}
+
+	@Test
+	public void testUpdateFailed() {
+		// tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> el departamento a eliminar es null, es decir, no existe;
+		// -2 --> el departamento nuevo tiene campos incorrectos (id negativo, por ejemplo)
+		
+		// -1:
+		dep = null;
+		int codigoError = saD.updateDepartamento(dep);
+		assertEquals(codigoError, -1);
+		
+		// -2:
+		dep = new TDepartamento("departamento", true);
+		dep.setIdDepartamento(-1);
+		codigoError = saD.updateDepartamento(dep);
+		assertEquals(codigoError, -2);		
+		
+	}
+}

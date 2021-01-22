@@ -1,0 +1,203 @@
+package Presentacion.Productos;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import Negocio.Parseador.Parseador;
+import Negocio.Producto.TOrdenador;
+import Negocio.Producto.TProducto;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+
+import java.awt.SystemColor;
+
+
+
+public class PanelAddOrdenador extends JPanel implements Ventana {
+	
+
+	private static final long serialVersionUID = 1L;
+
+	
+	private JTextField nombreText;
+	private JTextField descripcionText;
+	private JTextField stockText;
+	private JTextField precioText;
+	private JTextField procesadorText;
+	private JTextField RAMText;
+	private JTextField graficaText;
+	private JTextField capacidadText;
+	private JTextField fuenteText;
+	private JTextField placaText;
+	
+	
+	
+	public PanelAddOrdenador(){
+	
+		initComponent();
+	}
+	
+	
+	public void initComponent(){
+		
+		setLayout(null);
+		setOpaque(false);
+
+		nombreText = new JTextField();
+		nombreText.setColumns(10);
+		nombreText.setBounds(144, 75, 229, 30);
+		add(nombreText);
+
+		JLabel labelNombre = new JLabel("Nombre ");
+		labelNombre.setBounds(44, 91, 75, 14);
+		add(labelNombre);
+		
+		descripcionText = new JTextField();
+		descripcionText.setColumns(10);
+		descripcionText.setBounds(144, 154, 229, 30);
+		add(descripcionText);
+
+		JLabel labelDescrip = new JLabel("Descripcion ");
+		labelDescrip.setBounds(44, 162, 86, 30);
+		add(labelDescrip);
+		
+		stockText = new JTextField();
+		stockText.setColumns(10);
+		stockText.setBounds(144, 200, 229, 30);
+		add(stockText);
+
+		JLabel labelStock = new JLabel("Stock");
+		labelStock.setBounds(44, 216, 75, 14);
+		add(labelStock);
+		
+		precioText = new JTextField();
+		precioText.setColumns(10);
+		precioText.setBounds(144, 113, 229, 30);
+		add(precioText);
+
+		JLabel labelPrecio = new JLabel("Precio");
+		labelPrecio.setBounds(44, 132, 75, 14);
+		add(labelPrecio);
+		
+		JButton buttonAnadir = new JButton("Añadir");
+		buttonAnadir.setBackground(SystemColor.textHighlight);
+		
+		buttonAnadir.setBounds(241, 495, 132, 40);
+		add(buttonAnadir);
+		
+		
+		JLabel lblAadirProducto = new JLabel("A\u00D1ADIR ORDENADOR");
+		lblAadirProducto.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblAadirProducto.setBounds(37, 13, 273, 32);
+		add(lblAadirProducto);
+		
+		procesadorText = new JTextField();
+		procesadorText.setColumns(10);
+		procesadorText.setBounds(144, 246, 229, 30);
+		add(procesadorText);
+		
+		RAMText = new JTextField();
+		RAMText.setColumns(10);
+		RAMText.setBounds(144, 286, 229, 30);
+		add(RAMText);
+		
+		graficaText = new JTextField();
+		graficaText.setColumns(10);
+		graficaText.setBounds(144, 327, 229, 30);
+		add(graficaText);
+		
+		capacidadText = new JTextField();
+		capacidadText.setColumns(10);
+		capacidadText.setBounds(144, 368, 229, 30);
+		add(capacidadText);
+		
+		fuenteText = new JTextField();
+		fuenteText.setColumns(10);
+		fuenteText.setBounds(144, 414, 229, 30);
+		add(fuenteText);
+		
+		placaText = new JTextField();
+		placaText.setColumns(10);
+		placaText.setBounds(144, 449, 229, 30);
+		add(placaText);
+		
+		JLabel lblProcesador = new JLabel("Procesador");
+		lblProcesador.setBounds(42, 255, 101, 14);
+		add(lblProcesador);
+		
+		JLabel lblRam = new JLabel("RAM");
+		lblRam.setBounds(44, 294, 75, 14);
+		add(lblRam);
+		
+		JLabel lblGrafica = new JLabel("Grafica");
+		lblGrafica.setBounds(44, 335, 75, 14);
+		add(lblGrafica);
+		
+		JLabel lblCapacidad = new JLabel("Capacidad");
+		lblCapacidad.setBounds(44, 376, 75, 14);
+		add(lblCapacidad);
+		
+		JLabel lblFuenteDeAlimentacion = new JLabel("Power Suply");
+		lblFuenteDeAlimentacion.setBounds(44, 421, 93, 22);
+		add(lblFuenteDeAlimentacion);
+		
+		JLabel lblPlacaBase = new JLabel("Placa base");
+		lblPlacaBase.setBounds(44, 458, 75, 14);
+		add(lblPlacaBase);
+		
+		buttonAnadir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				if(Parseador.esNumerico(fuenteText.getText()) && Parseador.esAlfabetico(placaText.getText()) && Parseador.esNumerico(capacidadText.getText()) && Parseador.esAlfabetico(procesadorText.getText()) && Parseador.esAlfabetico(graficaText.getText()) && Parseador.esNumerico(RAMText.getText()) && Parseador.esAlfabetico(nombreText.getText()) && Parseador.esNumerico(stockText.getText()) && Parseador.esNumericoFloat(precioText.getText())){
+					
+					
+					TProducto producto = new TOrdenador(null,
+							Float.valueOf(precioText.getText()),
+							Integer.valueOf(stockText.getText()),
+							nombreText.getText(), 
+							descripcionText.getText(), 
+							procesadorText.getText(), 
+							Integer.valueOf(RAMText.getText()), 
+							graficaText.getText(), 
+							Integer.valueOf(capacidadText.getText()), 
+							Integer.valueOf(fuenteText.getText()), 
+							placaText.getText());
+			
+					Controller.getInstance().ejecutar(new Contexto(Eventos.createProducto, producto));
+				}else{
+					JOptionPane.showMessageDialog(null, "Datos incorrectos, comprueba sintacticamente los datos introducidos.");
+				}
+	
+			}
+		});
+		
+	}
+	
+	public void resetCamps(){
+		nombreText.setText(null);
+		descripcionText.setText(null);
+		stockText.setText(null);
+		precioText.setText(null);
+		
+	}
+
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		this.revalidate();
+		this.repaint();
+	}
+	
+	
+
+}

@@ -1,0 +1,113 @@
+package Presentacion.Departamento;
+
+import java.awt.Font;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import Negocio.Departamento.Departamento;
+import Negocio.Parseador.Parseador;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+
+public class PanelCalcularCosteDepartamento extends JPanel implements Ventana{
+
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+	private JButton button;
+	private JTextArea costeDepartTextField;
+	
+	public PanelCalcularCosteDepartamento(){
+		initComponent();
+	}
+	
+	public void initComponent() {
+		setLayout(null);
+		setOpaque(false);
+		button = new JButton("Buscar Departamento");
+		button.setBackground(SystemColor.textHighlight);
+		button.setBounds(434, 68, 171, 42);
+		add(button);
+
+		textField = new JTextField();
+		textField.setColumns(10);
+		textField.setBounds(83, 68, 339, 42);
+		add(textField);
+
+		JLabel lblIntroduceElId = new JLabel("Introduce el ID");
+		lblIntroduceElId.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblIntroduceElId.setBounds(83, 45, 110, 16);
+		add(lblIntroduceElId);
+		
+		JLabel lblCosteDelDepartamento = new JLabel("Coste del departamento");
+		lblCosteDelDepartamento.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblCosteDelDepartamento.setBounds(83, 168, 191, 16);
+		add(lblCosteDelDepartamento);
+		
+		costeDepartTextField = new JTextArea();
+		costeDepartTextField.setColumns(10);
+		costeDepartTextField.setBounds(83, 217, 339, 42);
+		add(costeDepartTextField);
+
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(Parseador.esNumerico(textField.getText())){
+					Controller.getInstance().ejecutar(new Contexto(Eventos.costeDepartamento, textField.getText()));
+					
+				}else{
+	    			JOptionPane.showMessageDialog(null, "Datos incorrectos, el ID a eliminar debe ser un numero");
+	    		}
+				
+
+			}
+		});
+		
+	}
+
+
+	@Override
+	public void resetCamps() {
+		textField.setText(null);
+		costeDepartTextField.setText(null);
+		
+	}
+
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		costeDepartTextField.setVisible(true);
+		costeDepartTextField.setEditable(false);
+		
+		Integer coste = (Integer) contexto.getDatos();
+		if(Parseador.comprobarNumeroPositivo(coste)){
+			costeDepartTextField.setText(Integer.toString(coste));
+		}else{
+			JOptionPane.showMessageDialog(null, "El coste es negativo");
+		}
+		/*
+		 * TDepartamento c = (TDepartamento) contexto.getDatos();
+		if(c !=null){
+			ControllerNUEVO.getInstance().ejecutar(new ContextoNUEVO(Eventos.costeDepartamento, c.getIdDepartamento()));
+		}*/
+
+		
+	}
+	
+	public void actualizarCoste(Contexto contexto) {
+	
+	
+
+		
+	}
+}

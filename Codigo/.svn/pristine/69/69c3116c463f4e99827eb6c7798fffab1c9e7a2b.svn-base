@@ -1,0 +1,20 @@
+package Negocio.Empleado;
+
+
+import java.util.List;
+
+
+public interface SAEmpleado {
+	
+	public Integer crearEmpleado(Empleado empleado);
+
+	public Integer borrarEmpleado(Integer idEmpleado);
+
+	public Integer updateEmpleado(Empleado empleado);
+
+	public Empleado readEmpleado(Integer idEmpleado);
+
+	public List<Empleado> readAllEmpleados();
+
+
+}

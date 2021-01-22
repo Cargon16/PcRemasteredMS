@@ -1,0 +1,297 @@
+package Integracion.Producto;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+import Integracion.TransactionManager.Transaction;
+import Integracion.TransactionManager.TransactionManager;
+import Negocio.Producto.TMonitor;
+import Negocio.Producto.TOrdenador;
+import Negocio.Producto.TProducto;
+
+public class DAOProductoImp implements DAOProducto {
+
+	public Integer create(TProducto producto) {
+		int id = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				int stock;
+				Float precio;
+				String nombre, descripcion;
+
+				// id=producto.getID();
+				precio = producto.getPrecio();
+				stock = producto.getStock();
+				nombre = producto.getNombre();
+				descripcion = producto.getDescripcion();
+
+				try {
+					// Statement state = connect.createStatement();
+					String query = "INSERT INTO producto (Precio, Stock, Nombre, Descripcion)" + "VALUES (" + precio
+							+ ", " + stock + ", '" + nombre + "', '" + descripcion + "');";
+					PreparedStatement state = connect.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+					state.execute();
+					// state.executeQuery(query);
+					ResultSet resultSet = state.getGeneratedKeys();
+
+					if (resultSet.next()) {
+						id = resultSet.getInt(1);
+
+						if (producto instanceof TOrdenador) {
+							query = "INSERT INTO ordenador (ID,Procesador,Ram,Grafica,Capacidad,Fuente,PlacaBase)"
+									+ " VALUES (" + id + ",' " 
+									+ ((TOrdenador) producto).getProcesador() + "', "
+									+ ((TOrdenador) producto).getRAM() + ",' "
+									+ ((TOrdenador) producto).getGrafica() + "', "
+									+ ((TOrdenador) producto).getCapacidad() + ", "
+									+ ((TOrdenador) producto).getFuente() + ",' "
+									+ ((TOrdenador) producto).getPlacaBase() + "'); ";
+							state.executeQuery(query);
+
+						} else if (producto instanceof TMonitor) {
+							query = "INSERT INTO monitor (ID,Dimension,Marca,Peso)" + " VALUES (" + id + ", "
+									+ ((TMonitor) producto).getDimension() + ",'"
+									+ ((TMonitor) producto).getMarca() + "', "
+									+ ((TMonitor) producto).getPeso() + "); ";
+							state.executeQuery(query);
+
+						}
+					}
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+					id = -1;
+				}
+			}
+		}
+		return id;
+	}
+
+	public ArrayList<TProducto> readAll() {
+
+		ArrayList<TProducto> listaProductos = new ArrayList<TProducto>();
+		TProducto producto = null;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					Statement state2 = connect.createStatement();
+
+					TProducto resultado;
+					String query = "SELECT * FROM producto FOR UPDATE ";
+					ResultSet resultSet = state.executeQuery(query);
+					ResultSet resultSet2;
+
+					while (resultSet.next()) {
+						resultado = new TProducto(resultSet.getInt("ID"), resultSet.getFloat("Precio"),
+								resultSet.getInt("Stock"), resultSet.getString("Nombre"),
+								resultSet.getString("Descripcion"));
+						query = "SELECT * FROM ordenador WHERE ID=" + resultSet.getInt("ID");
+						resultSet2 = state2.executeQuery(query);
+
+						if (resultSet2.next()) {
+							producto = new TOrdenador(resultSet2.getInt("ID"), resultado.getPrecio(),
+									resultado.getStock(), resultado.getNombre(), resultado.getDescripcion(),
+									resultSet2.getString("Procesador"), resultSet2.getInt("Ram"),
+									resultSet2.getString("Grafica"), resultSet2.getInt("Capacidad"),
+									resultSet2.getInt("Fuente"), resultSet2.getString("PlacaBase"));
+
+						} else {
+							query = "SELECT * FROM monitor WHERE ID= " + resultSet.getInt("ID");
+							resultSet2 = state2.executeQuery(query);
+							if (resultSet2.next()) {
+								producto = new TMonitor(resultSet2.getInt("ID"), resultado.getPrecio(),
+										resultado.getStock(), resultado.getNombre(), resultado.getDescripcion(),
+										resultSet2.getInt("Dimension"), resultSet2.getString("Marca"),
+										resultSet2.getInt("Peso"));
+							}
+							else producto = resultado;
+
+						}
+						listaProductos.add(producto);
+					}
+
+				} catch (SQLException e) {
+					listaProductos = null;
+				}
+			}
+		}
+		return listaProductos;
+	}
+
+	public Integer delete(Integer idProducto) {
+		int ind = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+
+					String query = "UPDATE producto SET stock=-1 WHERE ID =" + idProducto;
+					state.executeQuery(query);
+					ind = idProducto;
+				} catch (SQLException e) {
+					ind = -1;
+				}
+			}
+		}
+		return ind;
+	}
+
+	public Integer update(TProducto producto) {
+
+		int id = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					String query = "UPDATE producto SET  ID='" + producto.getID() + "', Precio='" + producto.getPrecio()
+					 + "', Stock='" + producto.getStock()+ "', Nombre='" + producto.getNombre()
+					 + "', Descripcion='" + producto.getDescripcion() + "' WHERE id=" + producto.getID();
+					state.executeQuery(query);
+
+					if (producto instanceof TOrdenador) {
+						query = "UPDATE ordenador SET" + "Procesador='" + ((TOrdenador) producto).getProcesador()
+								+ "', " + "Ram= " + ((TOrdenador) producto).getRAM() + ", " + "Grafica='"
+								+ ((TOrdenador) producto).getGrafica() + "'," + "Capacidad= "
+								+ ((TOrdenador) producto).getCapacidad() + ", " + "Fuente= "
+								+ ((TOrdenador) producto).getFuente() + ", " + "PlacaBase='"
+								+ ((TOrdenador) producto).getPlacaBase() + "' WHERE ID=" + producto.getID();
+						state.executeUpdate(query);
+
+					} else if (producto instanceof TMonitor) {
+						query = "UPDATE monitor SET Dimension= " + ((TMonitor) producto).getDimension() + ", "
+								+ "Marca= '" + ((TMonitor) producto).getMarca() + "', Peso= "
+								+ ((TMonitor) producto).getPeso() + " WHERE id= " + producto.getID();
+						state.executeUpdate(query);
+					}
+					id = producto.getID();
+				} catch (SQLException e) {
+					id = -1;
+				}
+			}
+		}
+		return id;
+	}
+
+	public TProducto readByID(Integer ID) {
+
+		TProducto producto = null;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					String query = "SELECT * FROM producto WHERE ID=" + ID + " FOR UPDATE";
+					ResultSet result = state.executeQuery(query);
+					
+				
+					if (result.next()) {
+						producto = new TProducto(result.getInt("ID"), result.getFloat("Precio"), result.getInt("Stock"),
+								result.getString("Nombre"), result.getString("Descripcion"));
+
+						query = "SELECT * FROM ordenador WHERE ID= " + ID + " FOR UPDATE";
+						try{
+						result = state.executeQuery(query);
+						if (result.next()) {
+							producto = new TOrdenador(result.getInt("ID"), producto.getPrecio(), producto.getStock(),
+									producto.getNombre(), producto.getDescripcion(), result.getString("Procesador"),
+									result.getInt("Ram"), result.getString("Grafica"), result.getInt("Capacidad"),
+									result.getInt("Fuente"), result.getString("PlacaBase"));
+						} else {
+							query = "SELECT * FROM monitor WHERE ID= " + ID + " FOR UPDATE";
+							result = state.executeQuery(query);
+							if (result.next()) {
+								producto = new TMonitor(result.getInt("ID"), producto.getPrecio(), producto.getStock(),
+										producto.getNombre(), producto.getDescripcion(), result.getInt("Dimension"),
+										result.getString("Marca"), result.getInt("Peso"));
+							}
+						}
+						}catch(Exception e){
+							e.printStackTrace();
+							producto = null;
+						}
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+					producto = null;
+				}
+			}
+		}
+		return producto;
+	}
+
+	public TProducto readByNombre(String nombre) {
+
+		TProducto producto = null;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					String query = "SELECT * FROM producto WHERE Nombre='" + nombre + "'" + " FOR UPDATE";
+
+					ResultSet result = state.executeQuery(query);
+					if (result.next()) {
+						producto = new TProducto(result.getInt("ID"), result.getFloat("Precio"), result.getInt("Stock"),
+								result.getString("Nombre"), result.getString("Descripcion"));
+
+						query = "SELECT * FROM ordenador WHERE  ID='" + producto.getID() + "'" + "FOR UPDATE";
+						result = state.executeQuery(query);
+						if (result.next() && producto instanceof TOrdenador) {
+							producto = new TOrdenador(result.getInt("ID"), producto.getPrecio(), producto.getStock(),
+									producto.getNombre(), producto.getDescripcion(), result.getString("Procesador"),
+									result.getInt("Ram"), result.getString("Grafica"), result.getInt("Capacidad"),
+									result.getInt("Fuente"), result.getString("PlacaBase"));
+						} else if(result.next() && producto instanceof TMonitor) {
+							query = "SELECT * FROM monitor WHERE  ID='" + producto.getID() + "'" + "FOR UPDATE";
+							result = state.executeQuery(query);
+							if (result.next()) {
+								producto = new TMonitor(result.getInt("ID"), producto.getPrecio(), producto.getStock(),
+										producto.getNombre(), producto.getDescripcion(), result.getInt("Dimension"),
+										result.getString("Marca"), result.getInt("Peso"));
+							}
+						}
+					}
+				} catch (SQLException e) {
+					producto = null;
+				}
+			}
+		}
+		return producto;
+	}
+}

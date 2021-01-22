@@ -1,0 +1,214 @@
+
+package Integracion.Venta;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+
+import Integracion.TransactionManager.Transaction;
+import Integracion.TransactionManager.TransactionManager;
+import Negocio.Venta.LineaVenta;
+import Negocio.Venta.TVenta;
+
+public class DAOVentaImp implements DAOVenta {
+
+	public Integer create(TVenta venta) {
+		int id = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+
+				Date fecha;
+				Boolean pagado;
+				int idCliente;
+				float precioTotal;
+
+				pagado = venta.getPagado();
+				fecha = venta.getFecha();
+				idCliente = venta.getIdCliente();
+				precioTotal = venta.getPrecioTotal();
+
+				try {
+					String query = "INSERT INTO venta (Pagado, Fecha, PrecioTotal, IDCliente) " + "VALUES (" + pagado + ", '" + fecha + "', '" + precioTotal + "', '" + idCliente + "');";
+					PreparedStatement state = connect.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+					state.execute();
+					ResultSet result = state.getGeneratedKeys();
+					if (result.next()) {
+						id = result.getInt(1);
+
+						HashMap<Integer, LineaVenta> lineaVentas = venta.getLineaVentas();
+						Collection<LineaVenta> valores = lineaVentas.values();
+						Iterator<LineaVenta> iterator = valores.iterator();
+						LineaVenta newLineaVenta;
+
+						while (iterator.hasNext()) {
+							newLineaVenta = iterator.next();
+							query = "INSERT INTO lineaVenta (IDVenta, precioTotal, IDProducto, Cantidad) " + "VALUES (" + id + ", "
+									+ newLineaVenta.getPrecioTotal() + ", " + newLineaVenta.getIDProducto() + ", " + newLineaVenta.getCantidad() + ");";
+							state = connect.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+							state.execute();
+						}
+					}
+
+				} catch (SQLException e) {
+					e.printStackTrace();
+					id = -1;
+				}
+			}
+		}
+		return id;
+	}
+
+	public Integer delete(Integer venta) {
+		int id = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+
+					String query = "UPDATE venta SET pagado= 0 WHERE IDVenta=" + venta;
+					state.executeQuery(query);
+					id = venta;
+
+				} catch (SQLException e) {
+					id = -1;
+				}
+			}
+		}
+		return id;
+	}
+
+	public TVenta read(Integer IdVenta) {
+
+		TVenta venta = null;
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					String query = "SELECT * FROM venta WHERE IDVenta=" + IdVenta + " FOR UPDATE";
+					ResultSet result = state.executeQuery(query);
+					if (result.next()) {
+						HashMap<Integer, LineaVenta> lineaVenta = new HashMap<Integer, LineaVenta>();
+						venta = new TVenta(IdVenta, result.getBoolean("pagado"), result.getInt("IDCliente"),
+								result.getFloat("preciototal"), result.getDate("fecha"), lineaVenta);
+						query = "SELECT * FROM lineaventa WHERE IDVenta=" + venta.getIDVenta() + " FOR UPDATE";
+						result = state.executeQuery(query);
+						LineaVenta lineaV;
+						while (result.next()) {
+							lineaV = new LineaVenta(result.getInt("IDProducto"), result.getInt("idVenta"),
+									result.getFloat("preciototal"), result.getInt("cantidad"));
+							lineaVenta.put(lineaV.getIDProducto(), lineaV);
+						}
+					}
+
+				} catch (SQLException e) {
+
+					venta = null;
+				}
+			}
+		}
+		return venta;
+	}
+
+	public ArrayList<TVenta> readAll() {
+		ArrayList<TVenta> listaVentas = new ArrayList<TVenta>();
+		TVenta venta = null;
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					Statement state2 = connect.createStatement();
+
+					String query = "SELECT * FROM venta";
+					ResultSet resultSet1 = state.executeQuery(query);
+					ResultSet resultSet2;
+					HashMap<Integer, LineaVenta> lineaVenta = null;
+
+					while (resultSet1.next()) {
+						lineaVenta = new HashMap<Integer, LineaVenta>();
+						venta = new TVenta(resultSet1.getInt("IDVenta"), resultSet1.getBoolean("pagado"),
+								resultSet1.getInt("IDCliente"), resultSet1.getFloat("preciototal"),
+								resultSet1.getDate("fecha"), lineaVenta);
+						query = "SELECT * FROM lineaventa WHERE IDVenta=" + venta.getIDVenta() + " FOR UPDATE";
+						resultSet2 = state2.executeQuery(query);
+						LineaVenta lineaV;
+						while (resultSet2.next()) {
+							lineaV = new LineaVenta(resultSet2.getInt("IDProducto"), resultSet2.getInt("idVenta"),
+									resultSet2.getFloat("preciototal"), resultSet2.getInt("cantidad"));
+							lineaVenta.put(lineaV.getIDProducto(), lineaV);
+						}
+						listaVentas.add(venta);
+					}
+
+				} catch (SQLException e) {
+					venta = null;
+				}
+			}
+		}
+		return listaVentas;
+	}
+
+	public Integer updateVenta(TVenta venta) {
+
+		int id = -1;
+
+		TransactionManager transactionManager = TransactionManager.getInstance();
+		Transaction transaction = transactionManager.getTransaction();
+		if (transaction != null) {
+			Connection connect = (Connection) transaction.getResource();
+
+			if (connect != null) {
+				try {
+					Statement state = connect.createStatement();
+					String query = "UPDATE venta SET  IDVenta='" + venta.getIDVenta() + "', Pagado=" + venta.getPagado()
+					 + ", IDCliente='" + venta.getIdCliente()+ "', PrecioTotal='" + venta.getPrecioTotal()
+					 + "', Fecha='" + venta.getFecha() + "' WHERE IDVenta=" + venta.getIDVenta();
+					state.executeQuery(query);
+					HashMap<Integer, LineaVenta> lineaVentas = venta.getLineaVentas();
+					Collection<LineaVenta> values = lineaVentas.values();
+					Iterator<LineaVenta> iterator = values.iterator();
+					LineaVenta lineaVenta;
+					while (iterator.hasNext()) {
+						lineaVenta = iterator.next();
+						String query1 = "UPDATE lineaVenta SET  IDVenta='" + venta.getIDVenta() + "', precioTotal=" + lineaVenta.getPrecioTotal()
+						 + ", IDProducto='" + lineaVenta.getIDProducto()+ "', Cantidad='" + lineaVenta.getCantidad() +
+						 "' WHERE IDVenta=" + venta.getIDVenta() + " and IDProducto=" + lineaVenta.getIDProducto();
+						state.executeUpdate(query1);
+					}
+					id = venta.getIDVenta();
+
+				} catch (SQLException e) {
+					id = -1;
+				}
+			}
+		}
+		return id;
+	}
+
+}

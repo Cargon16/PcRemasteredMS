@@ -1,0 +1,70 @@
+/**
+ * 
+ */
+package Integracion.TransactionManager;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class TransactionMySQL implements Transaction {
+
+	private Connection connection;
+	
+	
+	public TransactionMySQL(){
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			System.out.println("Driver JDBC cargados");
+			try{
+				connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/pcremastered", "root", "1234");
+				
+				if(connection !=null){
+					System.out.println("Conexion correcta MySQL database");
+				}
+			}catch(SQLException e){
+				e.printStackTrace();
+				connection =null;
+			}
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	
+	}
+	
+
+	public void Commit() {
+		try{
+			connection.commit();
+			connection.close();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	}
+
+
+	public void RollBack() {
+		try{
+			connection.rollback();
+			connection.close();
+		}catch(SQLException e ){
+			e.printStackTrace();
+		}
+	}
+
+	public Object getResource() {
+		return connection;
+	}
+
+
+	public void start() {
+		try{
+			connection.setAutoCommit(false);
+			
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+	}
+}

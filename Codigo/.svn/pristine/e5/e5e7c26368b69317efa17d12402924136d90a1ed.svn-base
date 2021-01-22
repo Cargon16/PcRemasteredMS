@@ -1,0 +1,22 @@
+/**
+ * @author Sergio Villarroel Fernández 	svillarr@ucm.es
+ *
+ *
+ */
+package Presentacion.Factorias;
+
+import Presentacion.Command.Command;
+
+public abstract class FactoriaCommandsNUEVO {
+
+	private static FactoriaCommandsNUEVO instance= null;
+
+	public static FactoriaCommandsNUEVO getInstance() {
+		if ( instance== null){
+			instance= new FactoriaCommandsImpNUEVO();
+		}
+		return instance;
+	}	
+	public abstract Command generacionCommand(int evento);
+		
+}

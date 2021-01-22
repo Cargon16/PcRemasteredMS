@@ -1,0 +1,273 @@
+package Presentacion.Competencia;
+
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+public class VentanaCompetenciasImp extends VentanaCompetencias {
+
+	private static final long serialVersionUID = 1L;
+	
+	private JPanel contentPane;
+	private PanelAddCompetencia anadir;
+	private PanelDeleteCompetencia eliminar;
+	private PanelMostrarTodosEmpleadosPoseenCompetencia actualizar;
+	private PanelReadByIdCompetencia mID;
+	private PanelReadAllCompetencia mAll;
+	private PanelAddCompetenciaEmpleado addEC;
+	private PanelDeleteCompetenciaEmpleado delEC;
+	private PanelMostrarTodosEmpleadosPoseenCompetencia mostrarAllEmpCompt;
+	private JButton botonanadir;
+	private JButton botonEliminar;
+	private JButton botonMostrarPoseenCompt;
+	private JButton botonMostrarID;
+	private JButton botonMostrarTodo;
+	private JButton addCompEmpleado;
+	private JButton delCompEmpleado;
+	
+	
+	public VentanaCompetenciasImp(){
+		
+		initComponent();
+	}
+	@Override
+	public void initPanel(){
+		
+		anadir = new PanelAddCompetencia();
+		eliminar = new PanelDeleteCompetencia();
+		actualizar = new PanelMostrarTodosEmpleadosPoseenCompetencia();
+		mID = new PanelReadByIdCompetencia();
+		mAll = new PanelReadAllCompetencia();
+		addEC = new PanelAddCompetenciaEmpleado();
+		delEC = new PanelDeleteCompetenciaEmpleado();
+		mostrarAllEmpCompt = new PanelMostrarTodosEmpleadosPoseenCompetencia();
+		contentPane = new JPanel();
+		
+	}
+	@Override
+	public void initComponent() {
+		initPanel();
+	
+		setResizable(false);
+		setVisible(true);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 737, 598);
+
+		
+		contentPane.setBackground(SystemColor.activeCaption);
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(5, 5, 706, 93);
+		contentPane.add(panel_1);
+		panel_1.setLayout(new GridLayout(1, 1, 0, 0));
+
+		final JPanel panel2 = new JPanel();
+		panel2.setOpaque(false);
+		panel2.setBounds(5, 109, 706, 439);
+		contentPane.add(panel2);
+		panel2.setLayout(new BorderLayout(0, 0));
+
+		final ArrayList<JPanel> paneles = new ArrayList<JPanel>();
+		anadir.setVisible(true);
+		paneles.add(anadir);
+
+		eliminar.setVisible(true);
+		paneles.add(eliminar);
+
+		actualizar.setVisible(true);
+		paneles.add(actualizar);
+
+		mID.setVisible(true);
+		paneles.add(mID);
+
+		mAll.setVisible(true);
+		paneles.add(mAll);
+		
+		addEC.setVisible(true);
+		paneles.add(addEC);
+		
+		delEC.setVisible(true);
+		paneles.add(delEC);
+		
+
+		
+
+
+		botonanadir = new JButton("Añadir Competencia");
+		botonanadir.setFont(new Font("Consolas", Font.BOLD, 11));
+		botonanadir.setBackground(SystemColor.activeCaptionBorder);
+
+		botonanadir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Añadir Competencia");
+				anadir.resetCamps();
+				panel2.add(paneles.get(0),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane()); 
+			
+
+
+			}
+		});
+		panel_1.add(botonanadir);
+
+		botonEliminar = new JButton("<html>Eliminar <br /> Competencia</html>");
+		botonEliminar.setFont(new Font("Consolas", Font.BOLD, 11));
+		botonEliminar.setBackground(SystemColor.activeCaptionBorder);
+		botonEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Eliminar Competencia");
+				eliminar.resetCamps();
+				panel2.add(paneles.get(1),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane()); 
+				
+			}
+		});
+		panel_1.add(botonEliminar);
+
+		botonMostrarPoseenCompt = new JButton("<html>Mostrar empleados<br /> con competencias</html>");
+		botonMostrarPoseenCompt.setFont(new Font("Consolas", Font.BOLD, 11));
+		botonMostrarPoseenCompt.setBackground(SystemColor.activeCaptionBorder);
+		botonMostrarPoseenCompt.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				panel2.removeAll();
+				setTitle("Mostrar empleados con competencias");
+				actualizar.resetCamps();
+				panel2.add(paneles.get(2),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane()); 
+				
+			}
+		});
+		panel_1.add(botonMostrarPoseenCompt);
+
+		botonMostrarID = new JButton("<html>Mostrar Competencias<br />por su ID </html>");
+		botonMostrarID.setFont(new Font("Consolas", Font.BOLD, 11));
+		botonMostrarID.setBackground(SystemColor.activeCaptionBorder);
+
+		botonMostrarID.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Mostrar Competencias por ID");
+				mID.resetCamps();
+				panel2.add(paneles.get(3),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(botonMostrarID);
+
+		botonMostrarTodo = new JButton("<html>Mostrar todas<br />las Competencias</html>");
+		botonMostrarTodo.setFont(new Font("Consolas", Font.BOLD, 11));
+		botonMostrarTodo.setBackground(SystemColor.activeCaptionBorder);
+
+		botonMostrarTodo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Mostrar todos las Competencias ");
+				mAll.resetCamps();
+				panel2.add(paneles.get(4),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(botonMostrarTodo);
+		
+		addCompEmpleado = new JButton("<html>Añadir<br />competencia empleado</html>");
+		addCompEmpleado.setFont(new Font("Consolas", Font.BOLD, 11));
+		addCompEmpleado.setBackground(SystemColor.activeCaptionBorder);
+
+		addCompEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Añadir competencia empleado ");
+				addEC.resetCamps();
+				panel2.add(paneles.get(5),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(addCompEmpleado);
+		
+		delCompEmpleado = new JButton("<html>Eliminar<br />competencia empleado</html>");
+		delCompEmpleado.setFont(new Font("Consolas", Font.BOLD, 11));
+		delCompEmpleado.setBackground(SystemColor.activeCaptionBorder);
+
+		delCompEmpleado.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				panel2.removeAll();
+				setTitle("Eliminar competencia empleado ");
+				delEC.resetCamps();
+				panel2.add(paneles.get(6),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(delCompEmpleado);
+		
+		
+		
+		setLocationRelativeTo(null);
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				System.out.println("Closed");
+				VentanaCompetencias.setInstance(null);        }
+		});
+	}
+
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		
+
+		switch (contexto.getEvento()) {
+		case Eventos.crearCompetenciaCommand: JOptionPane.showMessageDialog(null, "Se ha creado la competencia nuevo con id " +contexto.getDatos()); break;
+		case Eventos.crearCompetenciaCommandError: JOptionPane.showMessageDialog(null, "No se ha podido dar de alta la competencia"); break;
+		case Eventos.readCompetenciaCommand: mID.actualizar(contexto);break;
+		case Eventos.readCompetenciaCommandError: JOptionPane.showMessageDialog(null, "La competencia no existe");break;
+		case Eventos.borrarCompetenciaCommand:JOptionPane.showMessageDialog(null, "Se ha eliminado la competencia con id" +contexto.getDatos() + "\n existosamente") ;break;
+		case Eventos.borrarCompetenciaCommandError: if ( (Integer)contexto.getDatos() ==-2)
+			JOptionPane.showMessageDialog(null, "La competencia no existe");
+		else if( (Integer)contexto.getDatos()==-1)
+			JOptionPane.showMessageDialog(null, "La competencia ya esta inactiva");
+		else JOptionPane.showMessageDialog(null, "Ha ocurrido un problema al eliminar la competencia");
+		;break;
+		case Eventos.readAllCompetenciaCommand: mAll.actualizar(contexto); break;
+		case Eventos.readAllCompetenciaCommandError:JOptionPane.showMessageDialog(null, "No hay competencias registradas \n en la base de datos");break;
+		case Eventos.deleteCompetenciaEmpleadoCommandError: JOptionPane.showMessageDialog(null, "No se ha dado de baja la competencia al empleado");break;
+		case Eventos.deleteCompetenciaEmpleadoCommand: JOptionPane.showMessageDialog(null, "Se ha eliminado la competencia del empleado");break;
+		case Eventos.addCompetenciaEmpleadoCommand: JOptionPane.showMessageDialog(null, "Se le ha asignado la competencia al empleado correctamente");break;
+		case Eventos.addCompetenciaCommandError: JOptionPane.showMessageDialog(null, "No se ha podido asignar la competencia al empleado.");break;
+		case Eventos.mostrarEmpleadosQuePoseenCompetenciaCommand: actualizar.actualizar(contexto);break;
+		case Eventos.mostrarEmpleadosQuePoseenCompetenciaCommandError: JOptionPane.showMessageDialog(null, "Ha ocurrido un error");break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	public void resetCamps() {		
+	}
+
+}

@@ -1,0 +1,301 @@
+package Test;
+
+import Negocio.Departamento.SADepartamento;
+import Negocio.Departamento.SADepartamentoImpl;
+import Negocio.Departamento.Departamento;
+import Negocio.Empleado.SAEmpleado;
+import Negocio.Empleado.SAEmpleadoImpl;
+import Negocio.Empleado.Empleado;
+import Negocio.Empleado.TiempoCompleto;
+import Negocio.Empleado.TiempoParcial;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+public class TestEmpleados {
+
+	Empleado empCom = new TiempoCompleto();
+	Empleado empPar = new TiempoParcial();
+	Departamento dep = new Departamento();
+	SAEmpleado saE = new SAEmpleadoImpl();
+	SADepartamento saD = new SADepartamentoImpl();
+	
+	@Test
+	public void testCreatePassed() {
+		//Tiempo Completo
+		//creamos un empleado
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+		
+		//tenemos que crear tambien un departamento, lo creamos 
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		Departamento comprobar = saD.readDepartamento(codigoDep);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+		
+		//asociamos el departamento al empleado
+		empCom.setDepartamento(comprobar);
+		
+		//probamos a subirlo
+		
+		int codigoEmp = saE.crearEmpleado(empCom);
+		
+		Empleado empComLeido = saE.readEmpleado(codigoEmp);
+		
+		assertEquals(empComLeido.getNombre(), empCom.getNombre()); //comprobamos que existia y estaba en bbdd
+	
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(codigoDep); // para dejar la bbdd como estaba
+	}
+	
+	@Test
+	public void testCreateFailed() {
+		//tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> empleado es null
+		// -4 --> el departamento asociado al empleado no existe(o está inactivo)
+		
+		// -1:
+		empCom = null;
+		int codigoError = saE.crearEmpleado(empCom);
+		assertEquals(codigoError, -1);
+		
+		//-4:
+		//creamos primero un empleado
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+		//le asociamos departamento que no existe
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+		dep.setIdDepartamento(-1);
+		empCom.setDepartamento(dep);
+		//probamos a subirlo
+		
+		codigoError = saE.crearEmpleado(empCom);
+		assertEquals(codigoError, -1);
+	}
+	
+	@Test
+	public void testDeletePassed() {
+		//Tiempo Completo
+		//creamos un empleado
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+				
+		//tenemos que crear tambien un departamento, lo creamos 
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		Departamento comprobar = saD.readDepartamento(codigoDep);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+				
+		//asociamos el departamento al empleado
+		empCom.setDepartamento(comprobar);
+				
+		//probamos a subirlo
+		
+		int codigoEmp = saE.crearEmpleado(empCom);
+				
+		Empleado empComLeido = saE.readEmpleado(codigoEmp);
+				
+		assertEquals(empComLeido.getNombre(), empCom.getNombre()); //comprobamos que existia y estaba en bbdd
+		
+		//pasamos ahora a eliminarlo
+		
+		int codigo = saE.borrarEmpleado(codigoEmp);
+		empComLeido = saE.readEmpleado(codigo);
+		assertEquals(empComLeido.getActivo(), false);//comprobamos que esta eliminado (activo a false)
+		
+		
+		saD.borrarDepartamento(codigoDep); // para dejar la bbdd como estaba
+	}
+	
+	@Test
+	public void testDeleteFailed() {
+		//para que falle, o el empleado no existe o ya esta inactivo
+		//probemos las dos
+		assertEquals(saE.readEmpleado(-1), null); //comprobamos que no existe empleado con id -1
+		
+		//probamos a eliminar el empleado con id -1
+		int codigoError = saE.borrarEmpleado(-1);
+		assertEquals(codigoError, -1); //el codigo de error es -1, no estoy comparando ids
+		
+		//probamos ahora a eliminar un empleado ya eliminado
+		//creamos un empleado
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+						
+		//tenemos que crear tambien un departamento, lo creamos 
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		Departamento comprobar = saD.readDepartamento(codigoDep);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+						
+		//asociamos el departamento al empleado
+		empCom.setDepartamento(comprobar);
+						
+		//probamos a subirlo
+				
+		int codigoEmp = saE.crearEmpleado(empCom);
+						
+		Empleado empComLeido = saE.readEmpleado(codigoEmp);
+						
+		assertEquals(empComLeido.getNombre(), empCom.getNombre()); //comprobamos que existia y estaba en bbdd
+				
+		//pasamos ahora a eliminarlo
+				
+		int codigo = saE.borrarEmpleado(codigoEmp);
+		empComLeido = saE.readEmpleado(codigo);
+		assertEquals(empComLeido.getActivo(), false);//comprobamos que esta eliminado (activo a false)
+		
+		//probamos ahora a eliminarlo de nuevo
+		
+		codigoError = saE.borrarEmpleado(codigoEmp);
+		assertEquals(codigoError, -1);
+				
+		saD.borrarDepartamento(codigoDep); // para dejar la bbdd como estaba
+	
+	}
+	
+	@Test
+	public void testUpdatePassed() {
+		//creamos primero un empleado, y luego lo actualizamos
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+						
+		//tenemos que crear tambien un departamento, lo creamos 
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		Departamento comprobar = saD.readDepartamento(codigoDep);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+						
+		//asociamos el departamento al empleado
+		empCom.setDepartamento(comprobar);
+						
+		//probamos a subirlo
+				
+		int codigoEmp = saE.crearEmpleado(empCom);
+						
+		Empleado empComLeido = saE.readEmpleado(codigoEmp);
+						
+		assertEquals(empComLeido.getNombre(), empCom.getNombre()); //comprobamos que existia y estaba en bbdd
+		
+		//pasamos ahora a actualizarlo
+		
+		empComLeido.setNombre("cambiado");
+		int codigo = saE.updateEmpleado(empComLeido);
+		Empleado empLeido = saE.readEmpleado(codigo);
+		assertEquals(empLeido.getNombre(), "cambiado");
+		
+		empLeido.setNombre("tiempoCompleto");
+		
+		saE.updateEmpleado(empLeido); //para que no cree constantemente empleados nuevos cada vez que generamos junit, ya que asi reactiva el mismo siempre.
+		
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(codigoDep); // para dejar la bbdd como estaba
+	}
+	
+	@Test
+	public void testUpdateFailed() {
+		//para que falle, o el empleado no existe, o el nuevo departamento a asociar tampoco existe
+		
+		//primero intentamos actualizar un empleado null
+		
+		empCom = null;
+		int codigoError = saE.updateEmpleado(empCom);
+		assertEquals(codigoError, -1); //comprobamos que devuelve el codigo de error 
+		
+		//probamos ahora a intentar actualizar con un departamento que no existe
+		//creamos primero un empleado, y luego lo actualizamos
+		empCom = new TiempoCompleto();
+		empCom.setNombre("tiempoCompleto");
+		empCom.setPassword("password");
+		empCom.setTelefono(123456789);
+		empCom.setActivo(true);
+								
+		//tenemos que crear tambien un departamento, lo creamos 
+		dep = new Departamento();
+		dep.setNombre("departamento");
+		dep.setActivo(true);
+		dep.setCosteDepartamento((float) 123);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+
+		// comprobamos que se ha subido (lo leemos)
+		Departamento comprobar = saD.readDepartamento(codigoDep);
+		assertEquals(comprobar.getNombre(), dep.getNombre());
+								
+		//asociamos el departamento al empleado
+		empCom.setDepartamento(comprobar);
+								
+		//probamos a subirlo
+						
+		int codigoEmp = saE.crearEmpleado(empCom);
+								
+		Empleado empComLeido = saE.readEmpleado(codigoEmp);
+								
+		assertEquals(empComLeido.getNombre(), empCom.getNombre()); //comprobamos que existia y estaba en bbdd
+		
+		//pasamos ahora a intentar actualizar con un departamento no existente
+		assertEquals(saD.readDepartamento(-1), null); //comprobamos que no existe
+		
+		dep.setIdDepartamento(-1);
+		empComLeido.setDepartamento(dep);//le asociamos el departamento no existente
+		codigoError = saE.updateEmpleado(empComLeido);
+		assertEquals(codigoError, -1); //comprobamos que devuelve el error
+		
+		
+		
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(codigoDep); // para dejar la bbdd como estaba
+	}
+	
+}

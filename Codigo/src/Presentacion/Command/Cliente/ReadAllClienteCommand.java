@@ -1,0 +1,23 @@
+package Presentacion.Command.Cliente;
+
+import java.util.ArrayList;
+
+import Negocio.Cliente.TCliente;
+import Negocio.FactoriaNegocio.FactoriaNegocio;
+import Presentacion.Command.Command;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+public class ReadAllClienteCommand implements Command {
+
+	@Override
+	public Contexto ejecutar(Object contexto) {
+		// TODO Auto-generated method stub
+		ArrayList<TCliente> i = FactoriaNegocio.getInstance().generaSACliente().readAllClientes();
+		if(i==null || i.isEmpty()){
+			return new Contexto(Eventos.readAllClienteErrorCommand, i);
+			
+		}else return new Contexto(Eventos.readAllClienteCommand, i);
+	}
+	
+}

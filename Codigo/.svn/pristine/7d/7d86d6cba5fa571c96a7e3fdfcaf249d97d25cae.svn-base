@@ -1,0 +1,41 @@
+package Negocio.FactoriaNegocio;
+
+import Negocio.Cliente.SAClienteImp;
+import Negocio.Competencia.SACompetenciaImpl;
+import Negocio.Departamento.SADepartamentoImpl;
+import Negocio.Empleado.SAEmpleadoImpl;
+import Negocio.Producto.SAProductoImp;
+import Negocio.Venta.SAVentaImp;
+
+public class FactoriaNegocioImp extends FactoriaNegocio {
+
+	@Override
+	public SAClienteImp generaSACliente() {
+		return new SAClienteImp();
+
+	}
+
+	@Override
+	public SAProductoImp generaSAProducto() {
+		return new SAProductoImp();
+
+	}
+
+	@Override
+	public SAVentaImp generaSAVenta() {
+		return new SAVentaImp();
+
+	}
+	@Override
+	public SACompetenciaImpl generaSACompetencia(){
+		return new SACompetenciaImpl();
+	}
+	@Override
+	public SADepartamentoImpl generaSADepartamento(){
+		return new SADepartamentoImpl();
+	}
+	@Override
+	public SAEmpleadoImpl generaSAEmpleado(){
+		return new SAEmpleadoImpl();
+	}
+}

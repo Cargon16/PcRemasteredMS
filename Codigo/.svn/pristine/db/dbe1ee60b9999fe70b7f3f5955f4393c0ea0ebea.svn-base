@@ -1,0 +1,22 @@
+package Presentacion.Command.Empleado;
+
+import Negocio.Empleado.TiempoCompleto;
+import Negocio.FactoriaNegocio.FactoriaNegocio;
+import Presentacion.Command.Command;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+public class AddEmpleadoTiempoCompletoCommand implements Command{
+
+	@Override
+	public Contexto ejecutar(Object contexto) {
+		// TODO Auto-generated method stub
+		TiempoCompleto d = (TiempoCompleto) contexto;
+		int i= FactoriaNegocio.getInstance().generaSAEmpleado().crearEmpleado(d);
+		if(i<1){
+			return new Contexto(Eventos.addEmpleadoTiempoCompletoCommandError,i);
+		}else return new Contexto(Eventos.addEmpleadoTiempoCompletoCommand, i);
+		
+	}
+
+}

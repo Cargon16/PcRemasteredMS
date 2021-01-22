@@ -1,0 +1,321 @@
+package Presentacion.Productos;
+
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
+
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Eventos;
+
+import java.awt.SystemColor;
+import java.awt.Font;
+
+
+public class VentanaProductosImp extends VentanaProducto {
+
+	private static final long serialVersionUID = 1L;
+
+	private JPanel contentPaneProducto;
+	private PanelAddProducto anadir;
+	private PanelAddOrdenador ordenador;
+	private PanelAddMonitor monitor;
+	private PanelDeleteProducto delete;
+	private PanelReadAllProducto readAll;
+	private PanelReadByIdProducto readById;
+	private PanelUpdateProducto updateProducto;
+	private PanelQuerieOrdenador querieOrdenador;
+	private PanelQuerieMonitor querieMonitor;
+
+
+
+	public VentanaProductosImp(){
+		initPanels();
+		initComponent();
+	}
+
+	public void initPanels(){
+
+		anadir = new PanelAddProducto();
+		delete = new PanelDeleteProducto();
+		readAll = new PanelReadAllProducto();
+		updateProducto = new PanelUpdateProducto();
+		readById = new PanelReadByIdProducto();
+		monitor = new PanelAddMonitor();
+		ordenador = new PanelAddOrdenador();
+		querieOrdenador = new PanelQuerieOrdenador();
+		querieMonitor = new PanelQuerieMonitor();
+
+	}
+
+	public void initComponent(){
+		setResizable(false);
+		setVisible(true);
+		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setBounds(100, 100, 737, 698);
+
+		contentPaneProducto = new JPanel();
+		contentPaneProducto.setBackground(SystemColor.activeCaption);
+		contentPaneProducto.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPaneProducto);
+		contentPaneProducto.setLayout(null);
+
+		JPanel panel_1 = new JPanel();
+		panel_1.setBounds(5, 5, 706, 93);
+		contentPaneProducto.add(panel_1);
+		panel_1.setLayout(new GridLayout(1, 1, 0, 0));
+		final JPanel panel2 = new JPanel();
+		panel2.setOpaque(false);
+		panel2.setBounds(5, 109, 706, 550);
+		contentPaneProducto.add(panel2);
+		panel2.setLayout(new BorderLayout(0, 0));
+
+		final ArrayList<JPanel> paneles = new ArrayList<JPanel>();
+		anadir.setVisible(true);
+		paneles.add(anadir);
+
+		delete.setVisible(true);
+		paneles.add(delete);
+
+		updateProducto.setVisible(true);
+		paneles.add(updateProducto);
+
+		readById.setVisible(true);
+		paneles.add(readById);
+
+
+		readAll.setVisible(true);
+		paneles.add(readAll);
+
+		monitor.setVisible(true);
+		paneles.add(monitor);
+
+		ordenador.setVisible(true);
+		paneles.add(ordenador);
+		
+		querieOrdenador.setVisible(true);
+		paneles.add(querieOrdenador);
+		
+		querieMonitor.setVisible(true);
+		paneles.add(querieMonitor);
+
+
+		final JComboBox combo = new JComboBox();
+		combo.addItem("Producto");
+		combo.addItem("Ordenador");
+		combo.addItem("Monitor");
+		combo.setPrototypeDisplayValue(panel2.add(paneles.get(0)));
+		panel_1.add(combo);
+		combo.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				// TODO Auto-generated method stub
+				if(e.getSource()==combo){
+					String seleccionado= (String) combo.getSelectedItem();
+					int x;
+					if(seleccionado.contains("Producto")){
+						x=1;
+					}else if(seleccionado.contains("Ordenador")){
+						x=3;
+					}else{
+						x=2;
+					}
+					switch (x) {
+					case 1:
+						panel2.removeAll();
+						setTitle("Anadir Producto");
+						anadir.resetCamps();
+						panel2.add(paneles.get(0));
+						SwingUtilities.updateComponentTreeUI(getContentPane());
+						break;
+					case 2:
+						panel2.removeAll();
+						setTitle("Anadir Monitor");
+						anadir.resetCamps();
+						panel2.add(paneles.get(5));
+						SwingUtilities.updateComponentTreeUI(getContentPane());
+						
+						break;
+					case 3:
+						panel2.removeAll();
+						setTitle("Anadir Ordenador");
+						anadir.resetCamps();
+						panel2.add(paneles.get(6));
+						SwingUtilities.updateComponentTreeUI(getContentPane());
+						break;
+					default:
+						break;
+					}
+				}
+
+			}
+		});
+
+		JButton eliminar = new JButton("<html>Eliminar <br /> producto</html>");
+		eliminar.setFont(new Font("Consolas", Font.BOLD, 11));
+		eliminar.setBackground(SystemColor.activeCaptionBorder);
+		eliminar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Eliminar Producto");
+				delete.resetCamps();
+				panel2.add(paneles.get(1),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(eliminar);
+
+		JButton actualizar = new JButton("<html>Actualizar <br /> producto</html>");
+		actualizar.setFont(new Font("Consolas", Font.BOLD, 11));
+		actualizar.setBackground(SystemColor.activeCaptionBorder);
+		actualizar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Actualizar Producto");
+				updateProducto.resetCamps();
+				panel2.add(paneles.get(2),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(actualizar);
+
+		JButton mostrarID = new JButton("<html>Mostrar <br /> producto</html>");
+		mostrarID.setFont(new Font("Consolas", Font.BOLD, 11));
+		mostrarID.setBackground(SystemColor.activeCaptionBorder);
+		mostrarID.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Actualizar Producto");
+				readById.resetCamps();
+				panel2.add(paneles.get(3),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(mostrarID);
+
+		JButton mostrarTodo = new JButton("<html>Mostrar todos <br />los productos</html>");
+		mostrarTodo.setFont(new Font("Consolas", Font.BOLD, 11));
+		mostrarTodo.setBackground(SystemColor.activeCaptionBorder);
+		mostrarTodo.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Actualizar Producto");
+				readAll.resetCamps();
+				panel2.add(paneles.get(4),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(mostrarTodo);
+
+		
+		JButton queOrdenador = new JButton("<html>Ordenador más vendido</html>");
+		queOrdenador.setFont(new Font("Consolas", Font.BOLD, 11));
+		queOrdenador.setBackground(SystemColor.activeCaptionBorder);
+		queOrdenador.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Ordenador más vendido");
+				querieOrdenador.resetCamps();
+				panel2.add(paneles.get(7),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(queOrdenador);
+		
+		JButton queMonitor = new JButton("<html>Monitor más vendido</html>");
+		queMonitor.setFont(new Font("Consolas", Font.BOLD, 11));
+		queMonitor.setBackground(SystemColor.activeCaptionBorder);
+		queMonitor.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				panel2.removeAll();
+				setTitle("Monitor más vendido");
+				querieMonitor.resetCamps();
+				panel2.add(paneles.get(8),SwingConstants.CENTER);
+				SwingUtilities.updateComponentTreeUI(getContentPane());
+			}
+		});
+		panel_1.add(queMonitor);
+		setLocationRelativeTo(null);
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosing(WindowEvent e)
+			{
+				System.out.println("Closed");
+				VentanaProducto.setInstance();        }
+		});
+
+	}
+
+
+	@Override
+	public void resetCamps() {
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		switch (contexto.getEvento()) {
+		case Eventos.queryOrdenadorCommand: querieOrdenador.actualizar(contexto);break;
+		case Eventos.queryMonitorCommand: querieMonitor.actualizar(contexto);break;
+		case Eventos.queryMonitorCommandError: JOptionPane.showMessageDialog(null, "No se han encontrado resultados"); break;
+		case Eventos.queryOrdenadorCommandError: JOptionPane.showMessageDialog(null, "No se han encontrado resultados"); break;
+		case Eventos.createMonitorCommandError: JOptionPane.showMessageDialog(null, "No se ha podido dar de alta el monitor"); break;
+		case Eventos.createProductoCommand : if((Integer)contexto.getDatos()==100){
+			JOptionPane.showMessageDialog(null, "Se ha reactivado el producto");
+		}else{
+			JOptionPane.showMessageDialog(null, "Se ha creado el producto nuevo con id" + contexto.getDatos());
+		};break;
+		case Eventos.createProductoCommandError : JOptionPane.showMessageDialog(null, "No se ha podido anadir el producto"); break;
+		case Eventos.readProductoCommand: readById.actualizar(contexto); updateProducto.actualizar(contexto);break;
+		case Eventos.readProductoCommandError : JOptionPane.showMessageDialog(null, "El producto no existe");break;
+		case Eventos.deleteProductoCommand : JOptionPane.showMessageDialog(null, "Se ha eliminado el producto con id " + contexto.getDatos()+"\n  exitosamente ");break;
+		case Eventos.deleteProductoCommandError: JOptionPane.showMessageDialog(null, "El producto está agotado");break;
+		case Eventos.readAllProductoCommand : readAll.actualizar(contexto);break;
+		case Eventos.readAllProductoCommandError : JOptionPane.showMessageDialog(null, "No hay productos registrados \n en la base de datos");break;
+		case Eventos.readByIdProductosCommandError : JOptionPane.showMessageDialog(null, "El producto no existe");break;
+		case Eventos.createProductoErrorExisteCommand : JOptionPane.showMessageDialog(null, "El producto ya existe");break;
+		case Eventos.updateProductoCommandError : JOptionPane.showMessageDialog(null, "El producto no existe");break;
+		case Eventos.updateProductoCommand : JOptionPane.showMessageDialog(null, "El producto con ID:  " + contexto.getDatos() +" ha sido actualizado.");break;
+		default: 
+			break;
+		}
+		
+	}
+
+}

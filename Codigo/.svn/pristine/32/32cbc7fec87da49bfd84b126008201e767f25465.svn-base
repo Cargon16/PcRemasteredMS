@@ -1,0 +1,93 @@
+/**
+ * @author Sergio Villarroel Fernández 	svillarr@ucm.es
+ *
+ *
+ */
+package Presentacion.Productos;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Contexto;
+import Presentacion.IGUI.Ventana;
+import Presentacion.IGUI.Ventana;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import Negocio.Producto.TMonitor;
+import Negocio.Producto.TOrdenador;
+import Negocio.Producto.TProducto;
+import Presentacion.Command.Evento;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.Controlador.Controller;
+
+public class PanelQuerieOrdenador extends JPanel implements Ventana{
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+	private JTextArea text;
+	public PanelQuerieOrdenador() {
+
+		initComponents();
+	}
+
+	public void initComponents() {
+		setLayout(null);
+		setOpaque(false);
+		textField = new JTextField();
+		textField.setBounds(56, 123, 295, 36);
+		add(textField);
+		textField.setColumns(10);
+
+		text=new JTextArea();
+
+		JScrollPane scroll = new JScrollPane(text);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVisible(true);
+		scroll.setBounds(56, 168, 522, 150);
+		add(scroll);
+
+		text.setVisible(false);
+		text.setEditable(false);
+
+		JButton btnNewButton = new JButton("Consultar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Controller.getInstance().ejecutar(new Contexto(Eventos.queryOrdenador, Integer.valueOf(textField.getText())));
+			}
+		});
+		btnNewButton.setBounds(363, 123, 215, 36);
+		add(btnNewButton);
+	}
+
+	@Override
+	public void resetCamps() {
+		text.setText(null);
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		text.setVisible(true);
+		Contexto cnx = (Contexto) contexto.getDatos();
+		@SuppressWarnings("unchecked")
+		ArrayList<String> lista = (ArrayList<String>) cnx.getDatos();
+		String texto = "";
+
+		for(String c : lista){
+			texto = texto + c;
+
+		}
+		text.setText(texto);
+	}
+
+}
+

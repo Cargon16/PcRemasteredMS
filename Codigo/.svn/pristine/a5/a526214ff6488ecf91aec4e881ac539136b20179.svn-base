@@ -1,0 +1,304 @@
+package Test;
+
+import Negocio.Competencia.SACompetencia;
+import Negocio.Competencia.SACompetenciaImpl;
+import Negocio.Competencia.TieneID;
+import Negocio.Departamento.SADepartamento;
+import Negocio.Departamento.SADepartamentoImpl;
+import Negocio.Empleado.SAEmpleado;
+import Negocio.Empleado.SAEmpleadoImpl;
+
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+import Integracion.Competencia.TCompetencia;
+import Integracion.Departamento.TDepartamento;
+import Integracion.Empleado.TEmpleado;
+import Integracion.Empleado.TTiempoCompleto;
+
+public class TestCompetencia {
+
+	TCompetencia competencia = new TCompetencia(null, null);
+	TTiempoCompleto empleado = new TTiempoCompleto(null, null, true, null, null, null);
+	TDepartamento dep = new TDepartamento(null, null, null);
+	SACompetencia sa = new SACompetenciaImpl();
+	SAEmpleado saE = new SAEmpleadoImpl();
+	SADepartamento saD = new SADepartamentoImpl();
+	
+	
+	@Test
+	public void testCreatedPassed() {
+		//creamos primero una competencia
+		competencia = new TCompetencia(null, null);
+		competencia.setNombre("nombre");
+		competencia.setActiva(true);
+		
+		//la creamos
+		int codigo = sa.crearCompetencia(competencia);
+		
+		//la leemos (con el id dado por el sgbd)
+		TCompetencia comprobar = sa.readCompetencia(codigo);
+		
+		//comprobamos que la que se ha leido es la que hemos subido
+		assertEquals(comprobar.getNombre(), competencia.getNombre());		
+		sa.borrarCompetencia(codigo); //la ponemos en inactivo; siempre se probara con esta (se reactiva al crearla)
+	}
+	
+	@Test
+	public void testCreateFailed() {
+		//tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> la competencia que se intenta crear es nula;
+		// -2 --> el nombre de la competencia no es correcto sintacticamente
+		// -3 --> la competencia ya existe, y está activa
+		
+		// -1:
+		competencia = null; //ponemos a null para que salte el error
+		int codigoError = sa.crearCompetencia(competencia);
+		assertEquals(codigoError, -1); //comprobamos que salta
+		
+		// -2:
+		competencia = new TCompetencia(null, null);
+		competencia.setNombre("123"); //introducimos un nombre no alfabetico, es decir, equivocado
+		codigoError = sa.crearCompetencia(competencia);
+		assertEquals(codigoError, -2); //comprobamos que salta
+		
+		// -3:
+		// recreamos la que usamos en el testCreatePassed:
+		competencia = new TCompetencia("nombre", true);
+		
+		//la creamos
+		int codigo = sa.crearCompetencia(competencia);
+		
+		//la leemos 
+		TCompetencia comprobar = sa.readCompetencia(codigo);
+		
+		//comprobamos que la que se ha leido es la que hemos subido
+		assertEquals(comprobar.getNombre(), competencia.getNombre());		
+	
+		
+		//la volvemos a intentar crear
+		codigoError = sa.crearCompetencia(comprobar);
+		
+		//comprobamos que salta el error
+		assertEquals(codigoError, -3);
+
+		sa.borrarCompetencia(codigo); //la ponemos en inactivo; siempre se probara con esta (se reactiva al crearla)
+	}
+	
+	@Test
+	public void testDeletePassed() {
+		//creamos primero una competencia
+		competencia = new TCompetencia(null, null);
+		competencia.setNombre("nombre");
+		competencia.setActiva(true);
+	
+		
+		//la creamos
+		int codigo = sa.crearCompetencia(competencia);
+		
+		//la leemos 
+		TCompetencia comprobar = sa.readCompetencia(codigo);
+		
+		//comprobamos que la que se ha leido es la que hemos subido
+		assertEquals(comprobar.getNombre(), competencia.getNombre());		
+		
+		//pasamos ahora a eliminarla (ponemos en inactivo)
+		
+		int codigoEliminar = sa.borrarCompetencia(codigo);
+		
+		//comprobamos que esta eliminada
+		assertEquals(!sa.readCompetencia(codigoEliminar).isActiva(), false);
+		
+	}
+	
+	@Test
+	public void testDeleteFailed() {
+		//tenemos varios casos de error (el id indica el caso de error):
+		// -1 --> la competencia que se intenta eliminar esta ya en no activo(ya esta eliminada)
+		// -2 --> la competencia no existe
+		
+		// -1:
+		// comprobamos que la competencia existe pero esta en no activo
+		// creamos primero una competencia en no activo
+		competencia = new TCompetencia(null, null);
+		competencia.setNombre("nombre");
+		competencia.setActiva(false);
+
+		
+		//la creamos
+		int codigo = sa.crearCompetencia(competencia);
+		
+		//la leemos 
+		TCompetencia comprobar = sa.readCompetencia(codigo);
+		
+		//comprobamos que la que se ha leido es la que hemos subido (que esta en no activo)
+		assertEquals(!comprobar.isActiva(), false);
+		
+		//probamos ahora que al intentar eliminarla nos devuelve el codigo de error
+		int codigoError = sa.borrarCompetencia(codigo);
+		assertEquals(codigoError, -1);
+		
+		// -2: 
+		//probamos a borrar una competencia que no exista
+		//comprobamos primero que no existe una competencia con id -1
+		competencia = sa.readCompetencia(-1);
+		assertEquals(competencia, null);
+		
+		//intentamos eliminar y comprobamos que devuelve el codigo de error
+		codigoError = sa.borrarCompetencia(-1);
+		assertEquals(codigoError, -2);	
+	}	
+	
+	@Test
+	public void testAddCompetenciaEmpleado() {
+		//tenemos que crear primero una competencia y un empleado
+		//creamos primero la competencia (la misma que hasta ahora)
+		competencia = new TCompetencia(null, null);
+		competencia.setNombre("nombre");
+		competencia.setActiva(true);
+
+		
+		//la creamos
+		int codigoComp = sa.crearCompetencia(competencia);
+		
+		//la leemos (con el id dado por el sgbd)
+		TCompetencia comprobarComp = sa.readCompetencia(codigoComp);
+		
+		//comprobamos que la que se ha leido es la que hemos subido
+		assertEquals(comprobarComp.getNombre(), competencia.getNombre());		
+	
+		
+		//creamos ahora el empleado, debemos crear tambien un departamento
+		empleado = new TTiempoCompleto(123456789, true, "nombre", "password", null, 10);
+		empleado.setTipoEmpleado("TiempoCompleto");
+		
+		// creamos primero un departamento
+		dep = new TDepartamento("Departamento",true);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+		dep.setIdDepartamento(codigoDep);
+		empleado.setDepartamento(dep.getIdDepartamento()); 
+	
+		//lo creamos
+		int codigoEmp = saE.crearEmpleado(empleado);
+		
+		//la leemos (con el id dado por el sgbd)
+		TEmpleado comprobarEmp = saE.readEmpleado(codigoEmp);
+		
+		//comprobamos que el que se ha leido es el que hemos subido
+		assertEquals(comprobarEmp.getNombre(), empleado.getNombre());
+		assertEquals(comprobarEmp.getTelefono(), empleado.getTelefono());
+		
+		//probamos ahora a probar el metodo en si
+		TieneID tiene = new TieneID();
+		tiene.setCompetencia(codigoComp);
+		tiene.setEmpleado(codigoEmp);
+		
+		int codigo = sa.addCompetenciaEmpleado(tiene,2);
+		List<TEmpleado> listaEmpConCompe = new ArrayList<>();
+		listaEmpConCompe = sa.mostrarTodosLosEmpleadosQuePoseenCompetencia(codigoComp);
+		
+		boolean encontrado = false;
+		for(int i = 0; i < listaEmpConCompe.size(); i++) {
+			if (listaEmpConCompe.get(i).getIdEmpleado() == codigoEmp) { 
+				encontrado = true; 
+			}
+		} //encontramos el empleado en la competencia
+		
+		assertEquals(encontrado, true);//comprobamos que lo encuentra
+		
+		sa.deleteCompetenciaEmpleado(tiene);
+		sa.borrarCompetencia(codigoComp); //la ponemos en inactivo; siempre se probara con esta (se reactiva al crearla)
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(codigoDep); //dejamos la bbdd como estaba
+		
+		
+		
+	}
+	
+	
+	@Test
+	public void testDeleteCompetenciaEmpleado() {
+		//tenemos que crear una competencia y un empleado, y un departamento para el empleado
+		competencia = new TCompetencia("nombre", true);
+		
+		//la creamos
+		int codigoComp = sa.crearCompetencia(competencia);
+		
+		//la leemos (con el id dado por el sgbd)
+		TCompetencia comprobarComp = sa.readCompetencia(codigoComp);
+		
+		//comprobamos que la que se ha leido es la que hemos subido
+		assertEquals(comprobarComp.getNombre(), competencia.getNombre());		
+		
+		//creamos ahora el empleado, debemos crear tambien un departamento
+		empleado = new TTiempoCompleto(123456789,  true,  "nombre", "password", 1, 0);
+		empleado.setTipoEmpleado("TiempoCompleto");
+		// creamos primero un departamento
+		dep = new TDepartamento("departamento", true);
+
+		// lo creamos
+		int codigoDep = saD.crearDepartamento(dep);
+		dep.setIdDepartamento(codigoDep);
+		empleado.setDepartamento(codigoDep); 
+	
+		//lo creamos
+		int codigoEmp = saE.crearEmpleado(empleado);
+		
+		//la leemos (con el id dado por el sgbd)
+		TEmpleado comprobarEmp = saE.readEmpleado(codigoEmp);
+		
+		//comprobamos que el que se ha leido es el que hemos subido
+		assertEquals(comprobarEmp.getNombre(), empleado.getNombre());
+		assertEquals(comprobarEmp.getTelefono(), empleado.getTelefono());
+		
+		//probamos ahora a probar el metodo en si
+		//primero creamos una fila en la tabla
+		TieneID tiene = new TieneID();
+		tiene.setCompetencia(codigoComp);
+		tiene.setEmpleado(codigoEmp);
+		
+		int codigo = sa.addCompetenciaEmpleado(tiene, 1);
+		List<TEmpleado> listaEmpConCompe = new ArrayList<>();
+		listaEmpConCompe = sa.mostrarTodosLosEmpleadosQuePoseenCompetencia(codigoComp);
+		
+		boolean encontrado = false;
+		for(int i = 0; i < listaEmpConCompe.size(); i++) {
+			if (listaEmpConCompe.get(i).getIdEmpleado() == codigoEmp) { 
+				encontrado = true; 
+			}
+		} //encontramos el empleado en la competencia
+		
+		assertEquals(encontrado, true);//comprobamos que lo encuentra
+		
+		//pasamos ahora a eliminarla
+		
+		codigo = sa.deleteCompetenciaEmpleado(tiene);
+		listaEmpConCompe = sa.mostrarTodosLosEmpleadosQuePoseenCompetencia(codigoComp);
+		
+		encontrado = false;
+		for(int i = 0; i < listaEmpConCompe.size(); i++) {
+			if (listaEmpConCompe.get(i).getIdEmpleado() == codigoEmp) { 
+				encontrado = true; 
+			}
+		} //buscamos el empleado en la competencia
+		
+		assertEquals(encontrado, false); //comprobamos que no lo enuentra
+		
+		sa.deleteCompetenciaEmpleado(tiene);
+		sa.borrarCompetencia(codigoComp); //la ponemos en inactivo; siempre se probara con esta (se reactiva al crearla)
+		saE.borrarEmpleado(codigoEmp);
+		saD.borrarDepartamento(codigoDep); //dejamos la bbdd como estaba
+		
+		
+	}
+	
+	
+	
+	
+}

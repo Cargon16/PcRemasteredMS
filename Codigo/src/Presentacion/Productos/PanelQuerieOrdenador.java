@@ -1,0 +1,101 @@
+package Presentacion.Productos;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import Presentacion.Command.Contexto;
+import Presentacion.IGUI.Ventana;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+
+import Negocio.Parseador.Parseador;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
+import java.awt.Font;
+
+public class PanelQuerieOrdenador extends JPanel implements Ventana{
+	private static final long serialVersionUID = 1L;
+	private JTextField textField;
+	private JTextArea text;
+	private JLabel lblMonitorMsVendido;
+	private JLabel lblIntroduceElId;
+	public PanelQuerieOrdenador() {
+
+		initComponents();
+	}
+
+	public void initComponents() {
+		setLayout(null);
+		setOpaque(false);
+		textField = new JTextField();
+		textField.setBounds(53, 116, 295, 36);
+		add(textField);
+		textField.setColumns(10);
+
+		text=new JTextArea();
+
+		JScrollPane scroll = new JScrollPane(text);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVisible(true);
+		scroll.setBounds(56, 180, 522, 150);
+		add(scroll);
+
+		text.setVisible(false);
+		text.setEditable(false);
+
+		JButton btnNewButton = new JButton("Consultar");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(Parseador.esNumerico(textField.getText())){
+					Controller.getInstance().ejecutar(new Contexto(Eventos.queryOrdenador, Integer.valueOf(textField.getText())));
+				}else{
+					JOptionPane.showMessageDialog(null, "Datos incorrectos, el ID del cliente debe ser un numero");
+				}
+			}
+		});
+		btnNewButton.setBounds(363, 116, 215, 36);
+		add(btnNewButton);
+		
+		lblMonitorMsVendido = new JLabel("ORDENADOR M\u00C1S COMPRADO POR UN CLIENTE");
+		lblMonitorMsVendido.setFont(new Font("Tahoma", Font.BOLD, 16));
+		lblMonitorMsVendido.setBounds(56, 45, 404, 20);
+		add(lblMonitorMsVendido);
+		
+		lblIntroduceElId = new JLabel("Introduce el id del cliente");
+		lblIntroduceElId.setBounds(53, 81, 295, 20);
+		add(lblIntroduceElId);
+	}
+
+	@Override
+	public void resetCamps() {
+		text.setText(null);
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		text.setVisible(true);
+		//Contexto cnx = (Contexto) contexto.getDatos();
+		@SuppressWarnings("unchecked")
+		ArrayList<String> lista = (ArrayList<String>) contexto.getDatos();
+		String texto = "";
+
+		for(String c : lista){
+			texto += "Ordenador: " + c + "\n";
+
+		}
+		text.setText(texto);
+	}
+
+}
+

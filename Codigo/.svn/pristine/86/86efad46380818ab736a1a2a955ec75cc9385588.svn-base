@@ -1,0 +1,99 @@
+/**
+ * 
+ */
+package Presentacion.Ventas;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+
+import Negocio.Venta.TVenta;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Contexto;
+import Presentacion.Command.Evento;
+import Presentacion.Command.Eventos;
+import Presentacion.Controlador.Controller;
+import Presentacion.Controlador.Controller;
+import Presentacion.IGUI.Ventana;
+import Presentacion.IGUI.Ventana;
+
+import java.awt.SystemColor;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+
+
+public class PanelReadAllVentas extends JPanel implements Ventana {
+
+	private static final long serialVersionUID = 1L;
+	
+	private JButton buttonRead;
+	private JTextArea text;
+	private JLabel lblLeerVentas;
+	
+	public PanelReadAllVentas(){
+		initComponent();
+	}
+	
+	public  void initComponent() {
+		
+		setLayout(null);
+		setOpaque(false);
+		buttonRead = new JButton("Ver las Ventas");
+		buttonRead.setBackground(SystemColor.textHighlight);
+		buttonRead.setBounds(213, 43, 262, 57);
+		add(buttonRead);
+		
+		text=new JTextArea();
+		
+		JScrollPane scroll = new JScrollPane(text);
+		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		scroll.setVisible(true);
+		scroll.setBounds(69, 111, 599, 368);
+		add(scroll);
+		
+		text.setVisible(false);
+		text.setEditable(false);
+		
+		lblLeerVentas = new JLabel("Mostrar todas las Ventas");
+		lblLeerVentas.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLeerVentas.setFont(new Font("Tahoma", Font.PLAIN, 17));
+		lblLeerVentas.setBounds(146, 11, 402, 38);
+		add(lblLeerVentas);
+		buttonRead.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+			
+				Controller.getInstance().ejecutar(new Contexto(Eventos.readAllVenta, 1));
+				
+			}
+		});
+	}
+
+	public void resetCamps(){
+		text.setText(null);
+		
+	}
+
+	@Override
+	public void actualizar(Contexto contexto) {
+		// TODO Auto-generated method stub
+		text.setVisible(true);
+		
+		@SuppressWarnings("unchecked")
+		ArrayList<TVenta> lista = (ArrayList<TVenta>) contexto.getDatos();
+		String texto = "";
+		for(TVenta c : lista){
+			texto = texto + "ID: " + c.getIDVenta() + "\n" + "Importe: " + c.getPrecioTotal()
+			+ "\n"+ "Fecha: " + c.getFecha() + "\n"+"Pagado: "+c.getPagado() +"\n\n";
+		}
+		text.setText(texto);
+	}
+}
